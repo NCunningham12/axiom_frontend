@@ -1,0 +1,16 @@
+.hero {
+  width: 100%;
+  min-height: 90vh;
+  background: linear-gradient(to bottom right, #f0f4f8, #d9e2ec);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  color: #1e293b;
+  font-weight: 700;
+}
