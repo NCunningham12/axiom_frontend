@@ -1,6 +1,6 @@
 .nav-container {
   width: 100%;
-  background-color: #1f2937; /* dark gray for visibility */
+  background-color: #000000; /* dark gray for visibility */
   padding: 0 2rem;
 }
 
@@ -43,5 +43,5 @@
 }
 
 .nav-item:hover {
-  color: #3b82f6;
+  color: #008000;
 }
