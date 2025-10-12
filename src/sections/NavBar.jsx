@@ -14,8 +14,16 @@ const NavBar = () => {
         </div>
 
         <ul className="nav-menu">
-          <li className="nav-item">Home</li>
-          <li className="nav-item">Math</li>
+          <li className="nav-item">
+            <Link to="/" className="nav-links">
+              Home
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/assignment-creator" className="nav-links">
+              Math
+            </Link>
+          </li>
           <li className="nav-item">Teachers</li>
           <li className="nav-item">Tools</li>
           <li className="nav-item">Help</li>

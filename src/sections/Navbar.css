@@ -1,10 +1,14 @@
 .nav-container {
+  position: sticky;
   width: 100%;
   background-color: #000000; /* dark gray for visibility */
   padding: 0 2rem;
 }
 
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
