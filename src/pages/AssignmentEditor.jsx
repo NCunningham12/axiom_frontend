@@ -1,5 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import OneStepEditor from '../components/editors/OneStepEditor';
+import PythagSolvingEditor from '../components/editors/PythagSolvingEditor';
 import './AssignmentEditor.css';
 
 const AssignmentEditor = () => {
@@ -7,7 +9,7 @@ const AssignmentEditor = () => {
   const [problems, setProblems] = useState([]);
 
   const location = useLocation();
-  
+
   useEffect(() => {
     console.log('location.state:', location.state);
     if (location.state?.problems) {
@@ -15,6 +17,21 @@ const AssignmentEditor = () => {
       console.log('Loaded problems into state:', location.state.problems);
     }
   }, [location.state]);
+
+  const renderEditor = (type) => {
+    switch (type) {
+      case 'One-Step':
+        return <OneStepEditor />;
+      case 'Solving PT':
+        return <PythagSolvingEditor />;
+      default:
+        return (
+          <div style={{ color: '#999' }}>
+            ⚠️ No editor available for this type.
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="editor-container">
@@ -30,7 +47,7 @@ const AssignmentEditor = () => {
                   style={{
                     fontWeight:
                       selectedProblem?.id === problem.id ? 'bold' : 'normal',
-                    color: 
+                    color:
                       selectedProblem?.id === problem.id ? 'darkred' : 'white',
                     cursor: 'pointer',
                   }}
@@ -51,7 +68,9 @@ const AssignmentEditor = () => {
                 <strong>ID:</strong> {selectedProblem.id} <br />
                 <strong>Type:</strong> {selectedProblem.type}
               </p>
-              {/* You can swap this for a dynamic component later */}
+              <div className="editor-inner-pane">
+                {renderEditor(selectedProblem.type)}
+              </div>
             </div>
           ) : (
             <p>Select a problem to edit</p>

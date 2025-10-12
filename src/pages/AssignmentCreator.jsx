@@ -44,7 +44,7 @@ const AssignmentCreator = () => {
         {
           id: 102,
           name: 'Inequalities',
-          topics: ['Graphing', 'Solving', 'Compound'],
+          topics: ['Graphing Inequalities', 'Solving Inequalities', 'Compound'],
         },
       ],
     },
@@ -52,7 +52,11 @@ const AssignmentCreator = () => {
       id: 2,
       name: 'Geometry',
       subdomains: [
-        { id: 201, name: 'Angles', topics: ['Acute', 'Right', 'Obtuse'] },
+        {
+          id: 201,
+          name: 'Pythagorean Theorem',
+          topics: ['Solving PT', 'PT Word Problems'],
+        },
       ],
     },
   ];
