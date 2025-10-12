@@ -1,0 +1,40 @@
+.editor-container {
+  background: linear-gradient(to bottom right, #000000, #008000);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ae-title {
+  align-self: center;
+  color: white;
+  margin: 0.5rem;
+}
+
+.editor-wrapper {
+  min-height: 100vh;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  padding-bottom: 100px;
+}
+
+.problem-list {
+  background-color: rgb(80, 80, 80);
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: #000000 2px solid;
+}
+
+.editor-pane {
+  background-color: rgb(80, 80, 80);
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: #000000 2px solid;
+}

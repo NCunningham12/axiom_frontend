@@ -1,13 +1,12 @@
 .ac-container {
-  border: 2px red solid;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: linear-gradient(to bottom right, #000000, #008000);
+  padding-bottom: 40px;
 }
 
 .ac-content-wrapper {
-  border: 2px solid orange;
   display: flex;
   flex-direction: row;
   width: 80%;
@@ -17,20 +16,83 @@
   margin-top: 20px;
 }
 
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.ac-title {
+  color: #000000;
+}
+
 .ac-panel {
-  background-color: rgb(75, 75, 75);
+  background-color: rgb(80, 80, 80);
+  border-radius: 8px;
   width: 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ac-right-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ac-preview-title {
+  color: #000000;
+}
+
+.domain-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.ac-left-side {
-  border: 2px solid cyan;
+.domain-btn {
+  width: 90%;
 }
 
-.ac-right-side {
-  border: 2px solid purple;
+.back-button {
+  display: flex;
+  justify-content: left;
+  margin: 20px;
+}
+
+.select-domain {
+  color: #000000;
+  justify-self: center;
+}
+
+.domain-name {
+  color: #000000;
+  display: flex;
+  justify-content: center;
+}
+
+.sub-button {
+  width: 90%;
+  display: flex;
+  justify-self: center;
+  border-radius: 0px;
+  margin: 0px;
+  border: #000000 2px solid;
+  background-color: #008000;
+}
+
+.topic-li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  margin: 0rem auto;
+  padding: 0.5rem;
+  background-color: white;
+  color: black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgb(207, 207, 207);
+  border: #000000 2px solid;
 }
 
 .question-card {
@@ -39,12 +101,26 @@
   align-items: center;
   background-color: white;
   color: black;
-  margin: 0.5rem;
+  margin: 0.5rem auto;
   padding: 0.5rem;
-  width: 80%;
+  width: 90%;
   height: 40px;
-  border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.assignment-list {
+  width: 100%;
+  flex-grow: 1;
+  
+}
+
+.add-btn {
+  background: transparent;
+  color: black;
+  border: none;
+  font-size: 0.9rem;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
 }
 
 .remove-btn {
@@ -54,4 +130,20 @@
   font-size: 1rem;
   margin-left: 1rem;
   cursor: pointer;
+}
+
+/* Right Side Buttons */
+
+.right-btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  padding: 0.5rem;
+  width: 100%;
+  align-items: center;
+}
+
+.right-btn {
+  margin: 0.5rem;
+  width: 30%;
 }
