@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
+import AxiomALogo from "../assets/Axiom_A_Glow.png"
 import './Navbar.css';
 
 const NavBar = () => {
@@ -9,7 +10,7 @@ const NavBar = () => {
       <nav className="navbar">
         <div className="navbar-left">
           <Link to="/">
-            <img className="navbar-logo" src="/images.png" alt="" />
+            <img className="navbar-logo" src={AxiomALogo} alt="" />
           </Link>
         </div>
 

@@ -1,11 +1,13 @@
 import React from 'react';
+import AxiomLogo from "../assets/Axiom_Wordmark.svg"
+import AxiomLogoFinal from "../assets/Axiom_Wordmark_Final.png"
 import './HeroSection.css';
 
 const HeroSection = () => {
   return (
     <div>
       <div className="hero">
-        <h1>Axiom Math</h1>
+        <img src={AxiomLogoFinal} alt="Axiom logo" className='hero-logo' />
       </div>
     </div>
   );

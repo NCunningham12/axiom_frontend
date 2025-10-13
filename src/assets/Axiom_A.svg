@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 717.2 432.16">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke: #228b22;
+        stroke-miterlimit: 10;
+        stroke-width: 5px;
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient-2);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="4.61" y1="294.33" x2="254.28" y2="294.33" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#000100"/>
+      <stop offset="1" stop-color="#000"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="292.01" y1="242.79" x2="386.72" y2="242.79" xlink:href="#linear-gradient"/>
+  </defs>
+  <g id="A">
+    <polygon class="cls-1" points="254.28 228.58 253.67 257.03 214.6 257.03 172.85 358.97 121.73 360.08 100.03 311.66 24.16 312.48 4.61 282.48 125.83 282.48 144.26 325.12 188.28 228.58 254.28 228.58"/>
+    <polygon class="cls-3" points="254.28 228.58 255.99 148.81 223.89 228.58 188.28 228.58 293.31 11.06 290.82 426.86 250.77 393.67 254.28 228.58"/>
+  </g>
+  <g id="Short_Arrow" data-name="Short Arrow">
+    <polygon class="cls-2" points="292.01 257.15 352.11 257.43 325.95 282.46 348.41 282.15 386.72 242.79 350.42 203.11 328.51 203.11 352.73 229.02 292.01 228.74 292.01 257.15"/>
+  </g>
+</svg>

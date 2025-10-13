@@ -1,7 +1,7 @@
 .hero {
   width: 100%;
   min-height: 90vh;
-  background: linear-gradient(to bottom right, #000000, #008000);
+  background: linear-gradient(to bottom right, #252525, #000000);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,4 +13,8 @@
   font-size: 4rem;
   color: #ffffff;
   font-weight: 700;
+}
+
+.hero-logo {
+  width: 900px;
 }
