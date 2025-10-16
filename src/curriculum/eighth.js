@@ -28,7 +28,7 @@ export default {
             {
               id: 'square-roots',
               slug: 'solving-perfect-squares',
-              name: 'Square Roots',
+              name: 'Solving Perfect Square Roots',
               standard: '8.NS.A.2',
             },
             {
@@ -51,31 +51,31 @@ export default {
           skills: [
             {
               id: 'exp-rules-pop',
-              slug: 'product-of-powers',
+              slug: 'productOfPowers',
               name: 'Exponent Rules (Product of Powers)',
               standard: '8.EE.A.1',
             },
             {
               id: 'exp-rules-qop',
-              slug: 'quotient-of-powers',
+              slug: 'quotientOfPowers',
               name: 'Exponent Rules (Quotient of Powers)',
               standard: '8.EE.A.1',
             },
             {
               id: 'exp-rules-ptp',
-              slug: 'power-to-a-power',
+              slug: 'powerToPower',
               name: 'Exponent Rules (Power To A Power)',
               standard: '8.EE.A.1',
             },
             {
               id: 'exp-rules-neg',
-              slug: 'negative-powers',
+              slug: 'negativePowers',
               name: 'Exponent Rules (Negative Powers)',
               standard: '8.EE.A.1',
             },
             {
               id: 'exp-rules-mix',
-              slug: 'mixed-rules',
+              slug: 'mixedExponentRules',
               name: 'Exponent Rules (Mixed)',
               standard: '8.EE.A.1',
             },
@@ -87,22 +87,28 @@ export default {
           name: 'Scientific Notation',
           skills: [
             {
-              id: '',
-              slug: '',
-              name: '',
-              standard: '',
+              id: 'conv-dec-to-sn',
+              slug: 'decimal-to-scientific',
+              name: 'Converting Decimal to Scientific Notation',
+              standard: '8.EE.A.3',
             },
-          ],
-        },
-        {
-          id: 'slope-intercept-form',
-          name: 'Slope Intercept Form',
-          skills: [
             {
-              id: '',
-              slug: '',
-              name: '',
-              standard: '',
+              id: 'conv-sn-to-dec',
+              slug: 'scientific-to-decimal',
+              name: 'Converting Scientific Notation to Decimal',
+              standard: '8.EE.A.3',
+            },
+            {
+              id: 'sn-add-sub',
+              slug: 'scientific-add-subtract',
+              name: 'Adding/Subtracting with Scientific Notation',
+              standard: '8.EE.A.4',
+            },
+            {
+              id: 'sn-mult-div',
+              slug: 'scientific-multiply-divide',
+              name: 'Multiplying/Dividing with Scientific Notation',
+              standard: '8.EE.A.4',
             },
           ],
         },
@@ -111,10 +117,28 @@ export default {
           name: 'Linear Equations',
           skills: [
             {
-              id: '',
-              slug: '',
-              name: '',
-              standard: '',
+              id: 'graph-slope-int',
+              slug: 'graph-slope-intercept',
+              name: 'Graphing From Slope-Intercept Form',
+              standard: '8.EE.B.6',
+            },
+            {
+              id: 'slope-y-int-eq',
+              slug: 'slope-and-y-intecept',
+              name: 'Determining Slope/Y-Intercept From an Equation',
+              standard: '8.EE.B.6',
+            },
+            {
+              id: 'slope-y-int-gr',
+              slug: 'slope-and-y-intecept-graph',
+              name: 'Determining Slope/Y-Intercept From a Graph',
+              standard: '8.EE.B.6',
+            },
+            {
+              id: 'multi-step',
+              slug: 'multi-step',
+              name: 'Solving Multi-Step Linear Equations',
+              standard: '8.EE.C.7',
             },
           ],
         },
@@ -123,10 +147,22 @@ export default {
           name: 'Systems of Linear Equations',
           skills: [
             {
-              id: '',
-              slug: '',
-              name: '',
-              standard: '',
+              id: 'graphing-systems',
+              slug: 'graphing-systems',
+              name: 'Graphing Systems of Linear Equations',
+              standard: '8.EE.C.8.A',
+            },
+            {
+              id: 'systems-substitution',
+              slug: 'systems-substitution',
+              name: 'Solving Systems Algebraically (Substitution)',
+              standard: '8.EE.C.8.B',
+            },
+            {
+              id: 'systems-elimination',
+              slug: 'systems-elimination',
+              name: 'Solving Systems Algebraically (Elimination)',
+              standard: '8.EE.C.8.B',
             },
           ],
         },
@@ -141,7 +177,25 @@ export default {
           name: 'Function Representations',
           skills: [
             {
-              id: '',
+              id: 'identify-funtcions',
+              slug: 'identify-funtcions',
+              name: 'Identifying Functions',
+              standard: '8.F.A.1',
+            },
+            {
+              id: 'create-function-tables',
+              slug: 'create-function-tables',
+              name: 'Creating Function Tables',
+              standard: '8.F.A.1',
+            },
+            {
+              id: 'roc-from-tables',
+              slug: 'roc-from-tables',
+              name: 'Determining Rate of Change From a Table',
+              standard: '8.F.A.2',
+            },
+            {
+              id: '1',
               slug: '',
               name: '',
               standard: '',
@@ -153,7 +207,7 @@ export default {
           name: 'Qualitative Graphs',
           skills: [
             {
-              id: '',
+              id: '2',
               slug: '',
               name: '',
               standard: '',
@@ -171,7 +225,7 @@ export default {
           name: 'Transformations',
           skills: [
             {
-              id: '',
+              id: '3',
               slug: '',
               name: '',
               standard: '',
@@ -183,7 +237,7 @@ export default {
           name: 'Triangles',
           skills: [
             {
-              id: '',
+              id: '4',
               slug: '',
               name: '',
               standard: '',
@@ -195,7 +249,7 @@ export default {
           name: 'Parallels With Transversals',
           skills: [
             {
-              id: '',
+              id: '5',
               slug: '',
               name: '',
               standard: '',
@@ -207,7 +261,7 @@ export default {
           name: 'Pythagorean Theorem',
           skills: [
             {
-              id: '',
+              id: '6',
               slug: '',
               name: '',
               standard: '',
@@ -219,7 +273,7 @@ export default {
           name: 'Volume Of Curved Figures',
           skills: [
             {
-              id: '',
+              id: '7',
               slug: '',
               name: '',
               standard: '',
@@ -237,7 +291,7 @@ export default {
           name: 'Scatter Plots',
           skills: [
             {
-              id: '',
+              id: '8',
               slug: '',
               name: '',
               standard: '',
@@ -249,7 +303,7 @@ export default {
           name: 'Relative Frequency',
           skills: [
             {
-              id: '',
+              id: '9',
               slug: '',
               name: '',
               standard: '',

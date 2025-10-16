@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import OneStepEditor from '../components/editors/OneStepEditor';
 import PythagSolvingEditor from '../components/editors/PythagSolvingEditor';
+import PoPEditor from '../components/editors/PoPEditor';
 import './AssignmentEditor.css';
 
 const AssignmentEditor = () => {
@@ -24,6 +25,8 @@ const AssignmentEditor = () => {
         return <OneStepEditor />;
       case 'Solving PT':
         return <PythagSolvingEditor />;
+      case 'Exponent Rules (Product of Powers)':
+        return <PoPEditor />;
       default:
         return (
           <div style={{ color: '#999' }}>

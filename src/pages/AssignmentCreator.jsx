@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AssignmentCreator.css';
 import { Link, useNavigate } from 'react-router-dom';
+import curriculum from '../curriculum';
 
 const AssignmentCreator = () => {
   const [selectedDomain, setSelectedDomain] = useState(null);
@@ -31,35 +32,38 @@ const AssignmentCreator = () => {
   };
 
   // Sample placeholder data
-  const domains = [
-    {
-      id: 1,
-      name: 'Algebra',
-      subdomains: [
-        {
-          id: 101,
-          name: 'Linear Equations',
-          topics: ['One-Step', 'Two-Step', 'Word Problems'],
-        },
-        {
-          id: 102,
-          name: 'Inequalities',
-          topics: ['Graphing Inequalities', 'Solving Inequalities', 'Compound'],
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Geometry',
-      subdomains: [
-        {
-          id: 201,
-          name: 'Pythagorean Theorem',
-          topics: ['Solving PT', 'PT Word Problems'],
-        },
-      ],
-    },
-  ];
+  // const domains = [
+  //   {
+  //     id: 1,
+  //     name: 'Algebra',
+  //     subdomains: [
+  //       {
+  //         id: 101,
+  //         name: 'Linear Equations',
+  //         topics: ['One-Step', 'Two-Step', 'Word Problems'],
+  //       },
+  //       {
+  //         id: 102,
+  //         name: 'Inequalities',
+  //         topics: ['Graphing Inequalities', 'Solving Inequalities', 'Compound'],
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Geometry',
+  //     subdomains: [
+  //       {
+  //         id: 201,
+  //         name: 'Pythagorean Theorem',
+  //         topics: ['Solving PT', 'PT Word Problems'],
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  const grade = '8th';
+  const domains = curriculum[grade].domains;
 
   return (
     <div className="ac-container">
@@ -92,9 +96,9 @@ const AssignmentCreator = () => {
               </button>
               <h2 className="domain-name">{selectedDomain.name}</h2>
               <div className="topic-wrapper">
-                {selectedDomain.subdomains.map((sub) => (
+                {selectedDomain.concepts.map((concept) => (
                   <div
-                    key={sub.id}
+                    key={concept.id}
                     style={{ margin: '10px 0' }}
                     className="topic-card"
                   >
@@ -102,23 +106,26 @@ const AssignmentCreator = () => {
                       className="sub-button"
                       onClick={() =>
                         setExpandedSubdomain((prev) =>
-                          prev === sub.id ? null : sub.id
+                          prev === concept.id ? null : concept.id
                         )
                       }
                     >
-                      {sub.name}
+                      {concept.name}
                     </button>
 
-                    {expandedSubdomain === sub.id && (
+                    {expandedSubdomain === concept.id && (
                       <ul>
-                        {sub.topics.map((topic) => (
-                          <li className="topic-li" key={topic}>
-                            <span>{topic}</span>
+                        {concept.skills.map((skill) => (
+                          <li className="topic-li" key={skill.name}>
+                            <span>{skill.name}</span>
                             <button
                               className="add-btn"
                               onClick={() => {
-                                console.log(topic);
-                                setAssignmentTopics((prev) => [...prev, topic]);
+                                console.log(skill.name);
+                                setAssignmentTopics((prev) => [
+                                  ...prev,
+                                  skill.name,
+                                ]);
                               }}
                             >
                               Add

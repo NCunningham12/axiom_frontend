@@ -5,6 +5,7 @@ import NavBar from './sections/NavBar';
 import Footer from './sections/Footer';
 import AssignmentCreator from './pages/AssignmentCreator';
 import AssignmentEditor from './pages/AssignmentEditor';
+import Assignment from './pages/Assignment';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/assignment-creator" element={<AssignmentCreator />} />
             <Route path="/assignment-editor" element={<AssignmentEditor />} />
+            <Route path="/assignment" element={<Assignment />} />
           </Routes>
         </div>
         <Footer />
