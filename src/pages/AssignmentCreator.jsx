@@ -116,16 +116,13 @@ const AssignmentCreator = () => {
                     {expandedSubdomain === concept.id && (
                       <ul>
                         {concept.skills.map((skill) => (
-                          <li className="topic-li" key={skill.name}>
+                          <li className="topic-li" key={skill.slug}>
                             <span>{skill.name}</span>
                             <button
                               className="add-btn"
                               onClick={() => {
                                 console.log(skill.name);
-                                setAssignmentTopics((prev) => [
-                                  ...prev,
-                                  skill.name,
-                                ]);
+                                setAssignmentTopics((prev) => [...prev, skill]);
                               }}
                             >
                               Add
@@ -145,7 +142,7 @@ const AssignmentCreator = () => {
           <div className="assignment-list">
             {assignmentTopics.map((topic, index) => (
               <div key={index} className="question-card">
-                <span>{topic}</span>
+                <span>{topic.name}</span>
                 <button
                   className="remove-btn"
                   onClick={() => handleRemove(index)}
