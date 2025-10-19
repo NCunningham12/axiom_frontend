@@ -21,8 +21,14 @@ const AssignmentEditor = () => {
     if (location.state?.problems) {
       setProblems(location.state.problems);
       console.log('Loaded problems into state:', location.state.problems);
+    } else {
+      console.log('No problems in state');
     }
   }, [location.state]);
+
+  useEffect(() => {
+    console.log('problems in useState are: ', problems);
+  });
 
   const renderEditor = (type) => {
     switch (type) {
@@ -55,7 +61,7 @@ const AssignmentEditor = () => {
 
     const newAssignment = {
       title: '',
-      topic: '',
+      skill: '',
       type: '',
       problems: generatedProblems,
     };

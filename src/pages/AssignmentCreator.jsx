@@ -5,62 +5,31 @@ import curriculum from '../curriculum';
 
 const AssignmentCreator = () => {
   const [selectedDomain, setSelectedDomain] = useState(null);
-  const [expandedSubdomain, setExpandedSubdomain] = useState(null);
-  const [assignmentTopics, setAssignmentTopics] = useState([]);
+  const [expandedConcept, setExpandedConcept] = useState(null);
+  const [assignmentSkills, setAssignmentSkills] = useState([]);
 
   const navigate = useNavigate();
 
-  // Reset expanded subdomain when the domain changes
+  // Reset expanded concept when the domain changes
   useEffect(() => {
-    setExpandedSubdomain(null);
+    setExpandedConcept(null);
   }, [selectedDomain]);
 
   const handleRemove = (indexToRemove) => {
-    setAssignmentTopics((prev) =>
+    setAssignmentSkills((prev) =>
       prev.filter((_, index) => index !== indexToRemove)
     );
   };
 
   const handleNextClick = () => {
-    const topicsWithIds = assignmentTopics.map((topic, index) => ({
+    const skillsWithIds = assignmentSkills.map((skill, index) => ({
+      ...skill,
       id: index + 1,
-      type: topic,
     }));
 
-    console.log('Navigating with assignmentTopics:', topicsWithIds);
-    navigate('/assignment-editor', { state: { problems: topicsWithIds } });
+    console.log('Navigating with assignmentSkills:', skillsWithIds);
+    navigate('/assignment-editor', { state: { problems: skillsWithIds } });
   };
-
-  // Sample placeholder data
-  // const domains = [
-  //   {
-  //     id: 1,
-  //     name: 'Algebra',
-  //     subdomains: [
-  //       {
-  //         id: 101,
-  //         name: 'Linear Equations',
-  //         topics: ['One-Step', 'Two-Step', 'Word Problems'],
-  //       },
-  //       {
-  //         id: 102,
-  //         name: 'Inequalities',
-  //         topics: ['Graphing Inequalities', 'Solving Inequalities', 'Compound'],
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Geometry',
-  //     subdomains: [
-  //       {
-  //         id: 201,
-  //         name: 'Pythagorean Theorem',
-  //         topics: ['Solving PT', 'PT Word Problems'],
-  //       },
-  //     ],
-  //   },
-  // ];
 
   const grade = '8th';
   const domains = curriculum[grade].domains;
@@ -86,7 +55,7 @@ const AssignmentCreator = () => {
               ))}
             </div>
           ) : (
-            // === SUBDOMAIN DROPDOWNS SCREEN ===
+            // === CONCEPT DROPDOWNS SCREEN ===
             <div>
               <button
                 className="back-button"
@@ -105,7 +74,7 @@ const AssignmentCreator = () => {
                     <button
                       className="sub-button"
                       onClick={() =>
-                        setExpandedSubdomain((prev) =>
+                        setExpandedConcept((prev) =>
                           prev === concept.id ? null : concept.id
                         )
                       }
@@ -113,7 +82,7 @@ const AssignmentCreator = () => {
                       {concept.name}
                     </button>
 
-                    {expandedSubdomain === concept.id && (
+                    {expandedConcept === concept.id && (
                       <ul>
                         {concept.skills.map((skill) => (
                           <li className="topic-li" key={skill.slug}>
@@ -122,7 +91,7 @@ const AssignmentCreator = () => {
                               className="add-btn"
                               onClick={() => {
                                 console.log(skill.name);
-                                setAssignmentTopics((prev) => [...prev, skill]);
+                                setAssignmentSkills((prev) => [...prev, skill]);
                               }}
                             >
                               Add
@@ -140,9 +109,9 @@ const AssignmentCreator = () => {
         <div className="ac-right-side ac-panel">
           <h2 className="ac-preview-title">Assignment Preview</h2>
           <div className="assignment-list">
-            {assignmentTopics.map((topic, index) => (
+            {assignmentSkills.map((skill, index) => (
               <div key={index} className="question-card">
-                <span>{topic.name}</span>
+                <span>{skill.name}</span>
                 <button
                   className="remove-btn"
                   onClick={() => handleRemove(index)}
