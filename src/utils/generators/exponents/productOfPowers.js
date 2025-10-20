@@ -7,13 +7,16 @@ export function generateProductOfPowers() {
   const total = m + n;
 
   const question = `${base}^{${m}} \\cdot ${base}^{${n}}`;
-  const answer = `${base}^{${total}}`;
 
   return {
     id: `productOfPowers-${base}${m}${n}`,
-    topic: 'exponents',
+    concept: 'exponents',
     type: 'productOfPowers',
-    question,
-    answer,
+    directions: 'Solve the exponent using the Product of Powers Rule',
+    question: question,
+    answer: {
+      base: base,
+      exponent: total,
+    },
   };
 }

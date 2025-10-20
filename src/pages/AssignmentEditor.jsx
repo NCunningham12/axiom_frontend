@@ -5,7 +5,6 @@ import PythagSolvingEditor from '../components/editors/PythagSolvingEditor';
 import PoPEditor from '../components/editors/PoPEditor';
 // generators
 import generatorMap from '../utils/generators/generatorMap';
-import { generateProductOfPowers } from '../utils/generators/exponents/productOfPowers.js';
 
 import './AssignmentEditor.css';
 
@@ -60,7 +59,7 @@ const AssignmentEditor = () => {
       .filter(Boolean); // strips out nulls (bad types)
 
     const newAssignment = {
-      title: '',
+      title: 'Product of Powers',
       skill: '',
       type: '',
       problems: generatedProblems,
