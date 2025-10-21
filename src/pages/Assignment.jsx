@@ -10,6 +10,10 @@ const Assignment = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [baseInput, setBaseInput] = useState();
   const [expInput, setExpInput] = useState();
+  const [submissionStatus, setSubmissionStatus] = useState({});
+  const [studentAnswers, setStudentAnswers] = useState([]);
+  const [modalMessage, setModalMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const { state } = useLocation();
   const assignment = state?.assignment;
@@ -29,13 +33,42 @@ const Assignment = () => {
     const isBaseCorrect = normalize(baseInput) === correctBase;
     const isExpCorrect = normalize(expInput) === String(correctExponent);
 
+    let status = 'incorrect';
     if (isBaseCorrect && isExpCorrect) {
-      console.log('✅ Fully correct');
+      status = 'correct';
     } else if (isBaseCorrect || isExpCorrect) {
-      console.log('🟡 Partially correct');
-    } else {
-      console.log('❌ Incorrect');
+      status = 'partial';
     }
+
+    setSubmissionStatus((prev) => ({
+      ...prev,
+      [currentIndex]: status,
+    }));
+
+    // Set the modal message
+    let message = '';
+    if (status === 'correct') message = '✅ Correct!';
+    else if (status === 'partial') message = '⚠️ Partially Correct';
+    else message = '❌ Incorrect';
+
+    setModalMessage(message);
+    setShowModal(true);
+
+    // Fade out modal after 2 seconds
+    setTimeout(() => {
+      setShowModal(false);
+
+      // Only auto-advance if correct
+      if (status === 'correct') {
+        const nextUnanswered = assignment.problems.findIndex(
+          (_, i) => i > currentIndex && !submissionStatus[i]
+        );
+
+        if (nextUnanswered !== -1) {
+          setCurrentIndex(nextUnanswered);
+        }
+      }
+    }, 2000);
   };
 
   return (
@@ -49,6 +82,14 @@ const Assignment = () => {
                   key={index}
                   className={`problem-tab ${
                     index === currentIndex ? 'active' : ''
+                  } ${
+                    submissionStatus[index] === 'correct'
+                      ? 'correct'
+                      : submissionStatus[index] === 'partial'
+                      ? 'partial'
+                      : submissionStatus[index] === 'incorrect'
+                      ? 'incorrect'
+                      : ''
                   }`}
                   onClick={() => setCurrentIndex(index)}
                 >
@@ -59,14 +100,30 @@ const Assignment = () => {
           )}
         </div>
         <div className="main-section">
+          <h2 className="question-title">Question {currentIndex + 1}</h2>
           <div className="problem-wrapper">
             {assignment?.problems?.length > 0 && (
               <div className="problem-display">
-                <h2>{assignment.title}</h2>
+                <h3>{assignment.title}</h3>
                 <p className="problem-directions">
                   {assignment.problems[currentIndex].directions}
                 </p>
-                <BlockMath math={assignment.problems[currentIndex].question} />
+                {submissionStatus[currentIndex] && (
+                  <span
+                    className={`status-badge ${submissionStatus[currentIndex]}`}
+                  >
+                    {submissionStatus[currentIndex] === 'correct' &&
+                      'Correct ✅'}
+                    {submissionStatus[currentIndex] === 'partial' &&
+                      'Partially Correct ⚠️'}
+                    {submissionStatus[currentIndex] === 'incorrect' &&
+                      'Incorrect ❌'}
+                  </span>
+                )}
+                <BlockMath
+                  className="katex"
+                  math={assignment.problems[currentIndex].question}
+                />
                 <div className="math-input-group">
                   <input
                     type="text"
@@ -111,6 +168,11 @@ const Assignment = () => {
           <div className="sidebar"></div>
         </div>
       </div>
+      {showModal && (
+        <div className="fade-modal">
+          <p>{modalMessage}</p>
+        </div>
+      )}
     </div>
   );
 };
