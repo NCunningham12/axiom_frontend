@@ -12,6 +12,7 @@ export function generateProductOfPowers() {
     id: `productOfPowers-${base}${m}${n}`,
     concept: 'exponents',
     type: 'productOfPowers',
+    inputType: 'exponentInput',
     directions: 'Solve the exponent using the Product of Powers Rule',
     question: question,
     answer: {

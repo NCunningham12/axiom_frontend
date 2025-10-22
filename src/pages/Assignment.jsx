@@ -4,7 +4,7 @@ import { InlineMath, BlockMath } from 'react-katex';
 import { useLocation } from 'react-router-dom';
 import './Assignment.css';
 import { useState, useEffect } from 'react';
-import { use } from 'react';
+import inputComponentMap from '../components/inputTypes/inputComponentMap.js';
 
 const Assignment = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -17,6 +17,8 @@ const Assignment = () => {
 
   const { state } = useLocation();
   const assignment = state?.assignment;
+
+  const InputComponent = inputComponentMap[assignment.problems[currentIndex].inputType];
 
   useEffect(() => {
     setBaseInput('');
@@ -124,20 +126,14 @@ const Assignment = () => {
                   className="katex"
                   math={assignment.problems[currentIndex].question}
                 />
-                <div className="math-input-group">
-                  <input
-                    type="text"
-                    className="base-input"
-                    value={baseInput}
-                    onChange={(e) => setBaseInput(e.target.value)}
+                {InputComponent && (
+                  <InputComponent
+                    baseInput={baseInput}
+                    setBaseInput={setBaseInput}
+                    expInput={expInput}
+                    setExpInput={setExpInput}
                   />
-                  <input
-                    type="text"
-                    className="exponent-input"
-                    value={expInput}
-                    onChange={(e) => setExpInput(e.target.value)}
-                  />
-                </div>
+                )}
               </div>
             )}
             <button className="submit-btn" onClick={handleSubmit}>
