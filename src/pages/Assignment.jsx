@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import * as skillMap from '../skills/skillMap.js'; // Maps skillId to its file
+import { useLocation } from 'react-router-dom';
+import skillMap from '../skills/skillMap';
+import './Assignment.css';
 
 export default function Assignment() {
-  const { skillId } = useParams();
+  const location = useLocation();
+  const assignment = location.state?.assignment;
+
+  const skillId = assignment?.skill;
   const skill = skillMap[skillId];
+
+  if (!assignment) {
+    return (
+      <p>❌ No assignment data received. Were you routed here directly?</p>
+    );
+  }
+
+  if (!skill) {
+    return <p>❌ Invalid or unsupported skill ID: "{skillId}"</p>;
+  }
 
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [problems, setProblems] = useState([]);
@@ -25,7 +39,7 @@ export default function Assignment() {
   const handleSubmit = () => {
     const input = userAnswers[currentProblemIndex];
     const problem = problems[currentProblemIndex];
-    const status = skill.validateAnswer(input, problem); // "correct", "incorrect", etc.
+    const status = skill.validateAnswer(input, problem);
     setStatusMap({ ...statusMap, [currentProblemIndex]: status });
 
     if (currentProblemIndex < problems.length - 1) {
@@ -36,20 +50,27 @@ export default function Assignment() {
   const currentProblem = problems[currentProblemIndex];
 
   return (
-    <div className="assignment-container">
-      <div className="problem-area">
-        {currentProblem &&
-          skill.renderProblem(currentProblem, handleInputChange)}
-        <button onClick={handleSubmit}>Submit</button>
-      </div>
+    <div className="assignment-wrapper">
+      <div className="top-section"></div>
+      <div className="main-section">
+        <h2 className="question-title">{assignment.title || 'Assignment'}</h2>
 
-      <div className="status-panel">
-        <p>Status: {statusMap[currentProblemIndex] || 'unanswered'}</p>
-        <p>
-          Score:{' '}
-          {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
-          {problems.length}
-        </p>
+        <div className="problem-wrapper">
+          <div className="problem-display">
+            {currentProblem &&
+              skill.renderProblem(currentProblem, handleInputChange)}
+          </div>
+          <button onClick={handleSubmit}>Submit</button>
+        </div>
+
+        <div className="sidebar">
+          <p>Status: {statusMap[currentProblemIndex] || 'unanswered'}</p>
+          <p>
+            Score:{' '}
+            {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
+            {problems.length}
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -60,12 +60,11 @@ const AssignmentEditor = () => {
 
     const newAssignment = {
       title: 'Product of Powers',
-      skill: '',
-      type: '',
-      problems: generatedProblems,
+      skill: 'productOfPowers',
+      problems: [],
     };
 
-    navigate('/assignment', { state: { assignment: newAssignment } });
+    navigate(`/assignment`, { state: { assignment: newAssignment } });
   };
 
   return (
