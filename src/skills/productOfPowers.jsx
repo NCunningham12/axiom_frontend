@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
-import SmartInput from '../components/SmartInput';
+import MathInput from '../components/MathInput';
 
 // 1. Generator: create the dynamic problem
 export function generateProblem() {
@@ -28,18 +28,15 @@ export function generateProblem() {
 }
 
 // 2. Renderer: visually render the problem
-export function renderProblem(studentAnswer, problem, setStudentAnswer) {
-
+export function renderProblem(userAnswer, problem, handleInputChange) {
   return (
     <div>
       <h3>Product of Powers</h3>
       <p>{problem.directions}</p>
       <InlineMath math={problem.question} />
-      <SmartInput
-        radical
-        exponent
-        value={studentAnswer}
-        onChange={setStudentAnswer}
+      <MathInput
+        value={userAnswer}
+        onChange={(val) => handleInputChange(val)}
       />
     </div>
   );
