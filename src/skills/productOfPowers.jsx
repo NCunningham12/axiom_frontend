@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import 'katex/dist/katex.min.css';
+import { InlineMath } from 'react-katex';
+import SmartInput from '../components/SmartInput';
 
 // 1. Generator: create the dynamic problem
 export function generateProblem() {
@@ -25,20 +28,18 @@ export function generateProblem() {
 }
 
 // 2. Renderer: visually render the problem
-export function renderProblem(problem, onInputChange) {
+export function renderProblem(studentAnswer, problem, setStudentAnswer) {
+
   return (
     <div>
       <h3>Product of Powers</h3>
       <p>{problem.directions}</p>
-      <p>
-        <span
-          dangerouslySetInnerHTML={{ __html: `\\(${problem.question}\\)` }}
-        />
-      </p>
-      <input
-        type="text"
-        placeholder="Enter simplified expression (e.g., x^7)"
-        onChange={(e) => onInputChange(e.target.value.trim())}
+      <InlineMath math={problem.question} />
+      <SmartInput
+        radical
+        exponent
+        value={studentAnswer}
+        onChange={setStudentAnswer}
       />
     </div>
   );
@@ -49,7 +50,7 @@ export function validateAnswer(input, problem) {
   const expected = `${problem.answer.base}^${problem.answer.exponent}`;
 
   // Allow for slight input variation like spacing
-  const sanitizedInput = input.replace(/\s+/g, '');
+  const sanitizedInput = (input || '').replace(/\s+/g, '');
 
   if (sanitizedInput === expected) {
     return 'correct';

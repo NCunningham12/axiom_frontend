@@ -51,25 +51,68 @@ export default function Assignment() {
 
   return (
     <div className="assignment-wrapper">
-      <div className="top-section"></div>
+      <div className="top-section">
+        <div className="problem-selector">
+          {problems.map((_, index) => {
+            const status = statusMap[index];
+            const isActive = index === currentProblemIndex;
+
+            let className = 'problem-tab';
+            if (status === 'correct') className += ' problem-tab.correct';
+            else if (status === 'partial') className += ' problem-tab.partial';
+            else if (status === 'incorrect')
+              className += ' problem-tab.incorrect';
+
+            if (isActive) className += ' problem-tab.active';
+
+            return (
+              <button
+                key={index}
+                className={className}
+                onClick={() => setCurrentProblemIndex(index)}
+              >
+                {index + 1}
+              </button>
+            );
+          })}
+        </div>
+      </div>
       <div className="main-section">
         <h2 className="question-title">{assignment.title || 'Assignment'}</h2>
 
         <div className="problem-wrapper">
           <div className="problem-display">
             {currentProblem &&
-              skill.renderProblem(currentProblem, handleInputChange)}
+              skill.renderProblem(
+                userAnswers[currentProblemIndex] || '',
+                currentProblem,
+                handleInputChange
+              )}
           </div>
-          <button onClick={handleSubmit}>Submit</button>
+          <button className="submit-btn" onClick={handleSubmit}>
+            Submit
+          </button>
         </div>
 
         <div className="sidebar">
-          <p>Status: {statusMap[currentProblemIndex] || 'unanswered'}</p>
-          <p>
-            Score:{' '}
-            {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
-            {problems.length}
-          </p>
+          <div className="question-number-div">
+            <p>
+              Question {currentProblemIndex + 1} / {problems.length}
+            </p>
+          </div>
+          <div className="side-status-div">
+            <p>Status: {statusMap[currentProblemIndex] || 'Unanswered'}</p>
+          </div>
+          <div className="current-score-div">
+            <p>
+              Score:{' '}
+              {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
+              {problems.length}
+            </p>
+          </div>
+          <div className="question-time-div">
+            <p>Time Spent:</p>
+          </div>
         </div>
       </div>
     </div>
