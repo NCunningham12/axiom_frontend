@@ -33,30 +33,28 @@ export default function Assignment() {
   }, [skill]);
 
   const handleInputChange = (index, input) => {
-    console.log(
-      'handleInputChange fired for index',
-      index,
-      'with input:',
-      input
-    );
     setUserAnswers({ ...userAnswers, [index]: input });
   };
 
   const handleSubmit = () => {
     const input = userAnswers[currentProblemIndex];
-    console.log('Current problem index:', currentProblemIndex);
-    console.log('userAnswers:', userAnswers);
-    console.log('Retrieved input:', input);
     const problem = problems[currentProblemIndex];
     const status = skill.validateAnswer(input, problem);
     setStatusMap({ ...statusMap, [currentProblemIndex]: status });
 
-    // if (currentProblemIndex < problems.length - 1) {
-    //   setCurrentProblemIndex((prev) => prev + 1);
-    // }
+    if (currentProblemIndex < problems.length - 1) {
+      setCurrentProblemIndex((prev) => prev + 1);
+    }
   };
 
   const currentProblem = problems[currentProblemIndex];
+
+  const currentStatus = statusMap[currentProblemIndex] || 'unanswered';
+  const sidebarStatusClass = `side-content status-${currentStatus}`;
+  const displayStatus =
+    currentStatus === 'unanswered'
+      ? 'Unanswered'
+      : currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
 
   return (
     <div className="assignment-wrapper">
@@ -67,12 +65,11 @@ export default function Assignment() {
             const isActive = index === currentProblemIndex;
 
             let className = 'problem-tab';
-            if (status === 'correct') className += ' problem-tab.correct';
-            else if (status === 'partial') className += ' problem-tab.partial';
-            else if (status === 'incorrect')
-              className += ' problem-tab.incorrect';
+            if (status === 'correct') className += ' correct';
+            else if (status === 'partial') className += ' partial';
+            else if (status === 'incorrect') className += ' incorrect';
 
-            if (isActive) className += ' problem-tab.active';
+            if (isActive) className += ' active';
 
             return (
               <button
@@ -104,22 +101,27 @@ export default function Assignment() {
         </div>
         <div className="sidebar">
           <div className="question-number-div sidebar-div">
-            <p>
-              Question {currentProblemIndex + 1} / {problems.length}
+            <p className="side-header question-header">Question</p>
+            <p className="side-content">
+              {currentProblemIndex + 1} / {problems.length}
             </p>
           </div>
           <div className="side-status-div sidebar-div">
-            <p>Status: {statusMap[currentProblemIndex] || 'Unanswered'}</p>
+            <p className="side-header">Status:</p>
+            <p className={sidebarStatusClass}>
+              {displayStatus || 'Unanswered'}
+            </p>
           </div>
           <div className="current-score-div sidebar-div">
-            <p>
-              Score:{' '}
-              {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
+            <p className="side-header">Score: </p>
+            <p className="side-content">
+              {Object.values(statusMap).filter((s) => s === 'Correct').length} /{' '}
               {problems.length}
             </p>
           </div>
           <div className="question-time-div sidebar-div">
-            <p>Time Spent:</p>
+            <p className="side-header">Time Spent:</p>
+            <p className="side-content"></p>
           </div>
         </div>
       </div>

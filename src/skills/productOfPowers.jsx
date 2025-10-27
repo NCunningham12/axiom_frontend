@@ -72,11 +72,12 @@ export function validateAnswer(input, problem) {
   }
 
   if (sanitized.includes(expectedBase) && sanitized.includes('^')) {
-    return 'partially correct'; // base is right, something’s off with exponent
+    return 'partial'; // base is right, something’s off with exponent
   }
 
-  console.log('Sanitized input:', sanitized);
-  console.log('Expected:', expected);
+  if (sanitized.includes(expectedExponent) && sanitized.includes('^')) {
+    return 'partial';
+  }
 
   return 'incorrect';
 }
