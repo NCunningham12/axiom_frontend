@@ -28,30 +28,55 @@ export function generateProblem() {
 }
 
 // 2. Renderer: visually render the problem
-export function renderProblem(userAnswer, problem, handleInputChange) {
+export function renderProblem(userAnswer, problem, handleInputChange, index) {
   return (
-    <div>
+    <div className="problem-section-render">
       <h3>Product of Powers</h3>
       <p>{problem.directions}</p>
       <InlineMath math={problem.question} />
       <MathInput
         value={userAnswer}
-        onChange={(val) => handleInputChange(val)}
+        onChange={(val) => {
+          handleInputChange(index, val);
+        }}
       />
     </div>
   );
 }
 
 // 3. Validator: check the student's answer
-export function validateAnswer(input, problem) {
-  const expected = `${problem.answer.base}^${problem.answer.exponent}`;
-
-  // Allow for slight input variation like spacing
-  const sanitizedInput = (input || '').replace(/\s+/g, '');
-
-  if (sanitizedInput === expected) {
-    return 'correct';
-  } else {
+function sanitizeMathInput(input) {
+  console.log('input is: ', input);
+  if (!input) {
+    console.warn('No input provided to validator');
     return 'incorrect';
   }
+  return (input || '')
+    .replace(/\\text\{(.*?)\}/g, '$1') // convert \text{x} to x
+    .replace(/\\?/g, '') // remove backslashes
+    .replace(/\s+/g, '') // remove all whitespace
+    .toLowerCase(); // make case-insensitive
+}
+
+export function validateAnswer(input, problem) {
+  console.log('🔍 validateAnswer called');
+
+  const expectedBase = `${problem.answer.base}`;
+  const expectedExponent = `${problem.answer.exponent}`;
+  const expected = `${expectedBase}^${expectedExponent}`;
+
+  const sanitized = sanitizeMathInput(input);
+
+  if (sanitized === expected) {
+    return 'correct';
+  }
+
+  if (sanitized.includes(expectedBase) && sanitized.includes('^')) {
+    return 'partially correct'; // base is right, something’s off with exponent
+  }
+
+  console.log('Sanitized input:', sanitized);
+  console.log('Expected:', expected);
+
+  return 'incorrect';
 }

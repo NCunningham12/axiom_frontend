@@ -32,19 +32,28 @@ export default function Assignment() {
     setProblems(newProblems);
   }, [skill]);
 
-  const handleInputChange = (input) => {
-    setUserAnswers({ ...userAnswers, [currentProblemIndex]: input });
+  const handleInputChange = (index, input) => {
+    console.log(
+      'handleInputChange fired for index',
+      index,
+      'with input:',
+      input
+    );
+    setUserAnswers({ ...userAnswers, [index]: input });
   };
 
   const handleSubmit = () => {
     const input = userAnswers[currentProblemIndex];
+    console.log('Current problem index:', currentProblemIndex);
+    console.log('userAnswers:', userAnswers);
+    console.log('Retrieved input:', input);
     const problem = problems[currentProblemIndex];
     const status = skill.validateAnswer(input, problem);
     setStatusMap({ ...statusMap, [currentProblemIndex]: status });
 
-    if (currentProblemIndex < problems.length - 1) {
-      setCurrentProblemIndex((prev) => prev + 1);
-    }
+    // if (currentProblemIndex < problems.length - 1) {
+    //   setCurrentProblemIndex((prev) => prev + 1);
+    // }
   };
 
   const currentProblem = problems[currentProblemIndex];
@@ -79,38 +88,37 @@ export default function Assignment() {
       </div>
       <div className="main-section">
         <h2 className="question-title">{assignment.title || 'Assignment'}</h2>
-
         <div className="problem-wrapper">
           <div className="problem-display">
             {currentProblem &&
               skill.renderProblem(
                 userAnswers[currentProblemIndex] || '',
                 currentProblem,
-                handleInputChange
+                handleInputChange,
+                currentProblemIndex
               )}
           </div>
           <button className="submit-btn" onClick={handleSubmit}>
             Submit
           </button>
         </div>
-
         <div className="sidebar">
-          <div className="question-number-div">
+          <div className="question-number-div sidebar-div">
             <p>
               Question {currentProblemIndex + 1} / {problems.length}
             </p>
           </div>
-          <div className="side-status-div">
+          <div className="side-status-div sidebar-div">
             <p>Status: {statusMap[currentProblemIndex] || 'Unanswered'}</p>
           </div>
-          <div className="current-score-div">
+          <div className="current-score-div sidebar-div">
             <p>
               Score:{' '}
               {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
               {problems.length}
             </p>
           </div>
-          <div className="question-time-div">
+          <div className="question-time-div sidebar-div">
             <p>Time Spent:</p>
           </div>
         </div>

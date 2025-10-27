@@ -1,4 +1,3 @@
-// MathInput.jsx
 import { useRef, useEffect } from 'react';
 import 'mathlive';
 
@@ -6,26 +5,27 @@ export default function MathInput({ value, onChange }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.value = value || '';
-      ref.current.addEventListener('input', (e) => {
-        onChange(e.target.value);
-      });
-    }
+    const inputEl = ref.current;
+    if (!inputEl) return;
 
-    // Cleanup
-    return () => {
-      if (ref.current) {
-        ref.current.removeEventListener('input', onChange);
-      }
+    const handle = (e) => {
+      onChange(e.target.value);
+      console.log('🧠 Raw MathInput:', e.target.value);
     };
-  }, [ref.current]);
+
+    inputEl.value = value || '';
+    inputEl.addEventListener('input', handle);
+
+    return () => {
+      inputEl.removeEventListener('input', handle);
+    };
+  }, [value]); // <--- Only rebind if `value` changes
 
   return (
     <math-field
       ref={ref}
       style={{
-        width: '100%',
+        width: '30%',
         minHeight: '40px',
         border: '1px solid #ccc',
         borderRadius: '6px',
