@@ -84,7 +84,7 @@ export default function Assignment() {
         </div>
       </div>
       <div className="main-section">
-        <h2 className="question-title">{assignment.title || 'Assignment'}</h2>
+        <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
         <div className="problem-wrapper">
           <div className="problem-display">
             {currentProblem &&
@@ -115,7 +115,7 @@ export default function Assignment() {
           <div className="current-score-div sidebar-div">
             <p className="side-header">Score: </p>
             <p className="side-content">
-              {Object.values(statusMap).filter((s) => s === 'Correct').length} /{' '}
+              {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
               {problems.length}
             </p>
           </div>
