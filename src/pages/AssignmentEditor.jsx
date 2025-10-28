@@ -46,7 +46,6 @@ const AssignmentEditor = () => {
 
   // Next Button
   const handleNext = () => {
-    console.log(generatorMap);
     const generatedProblems = problems
       .map((prob) => {
         const generatorFunc = generatorMap[prob.slug];
@@ -54,17 +53,22 @@ const AssignmentEditor = () => {
           console.warn(`❌ Missing generator for slug: ${prob.slug}`);
           return null;
         }
-        return generatorFunc(); // generate problem object
+        return {
+          ...generatorFunc(),
+          skill: prob.slug,
+        };
       })
-      .filter(Boolean); // strips out nulls (bad types)
+      .filter(Boolean); // remove any nulls
+
+    console.log('problems variable: ', problems);
 
     const newAssignment = {
-      title: 'Product of Powers',
-      skill: 'productOfPowers',
-      problems: [],
+      title: 'Custom Assignment',
+      skills: problems.map((p) => p.slug),
+      problems: generatedProblems,
     };
 
-    navigate(`/assignment`, { state: { assignment: newAssignment } });
+    navigate('/assignment', { state: { assignment: newAssignment } });
   };
 
   return (

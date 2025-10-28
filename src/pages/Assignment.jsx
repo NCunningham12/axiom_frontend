@@ -1,24 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import skillMap from '../skills/skillMap';
+import generatorMap from '../utils/generators/generatorMap.js';
 import './Assignment.css';
 
 export default function Assignment() {
   const location = useLocation();
   const assignment = location.state?.assignment;
-
-  const skillId = assignment?.skill;
-  const skill = skillMap[skillId];
-
-  if (!assignment) {
-    return (
-      <p>❌ No assignment data received. Were you routed here directly?</p>
-    );
-  }
-
-  if (!skill) {
-    return <p>❌ Invalid or unsupported skill ID: "{skillId}"</p>;
-  }
 
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [problems, setProblems] = useState([]);
@@ -26,11 +14,21 @@ export default function Assignment() {
   const [statusMap, setStatusMap] = useState({});
 
   useEffect(() => {
-    const newProblems = Array.from({ length: 10 }, () =>
-      skill.generateProblem()
-    );
+    if (!assignment?.problems) return;
+
+    const newProblems = assignment.problems
+      .map((problemConfig) => {
+        const generator = generatorMap[problemConfig.type];
+        if (!generator) {
+          console.warn(`No generator found for type: ${problemConfig.type}`);
+          return null;
+        }
+        return generator();
+      })
+      .filter(Boolean);
+
     setProblems(newProblems);
-  }, [skill]);
+  }, [assignment]);
 
   const handleInputChange = (index, input) => {
     setUserAnswers({ ...userAnswers, [index]: input });
@@ -39,11 +37,23 @@ export default function Assignment() {
   const handleSubmit = () => {
     const input = userAnswers[currentProblemIndex];
     const problem = problems[currentProblemIndex];
+    const skill = skillMap[problem.type];
+
+    if (!skill || !skill.validateAnswer) {
+      console.warn(`No validator found for type: ${problem.type}`);
+      return;
+    }
+
     const status = skill.validateAnswer(input, problem);
     setStatusMap({ ...statusMap, [currentProblemIndex]: status });
 
-    if (currentProblemIndex < problems.length - 1) {
-      setCurrentProblemIndex((prev) => prev + 1);
+    if (status === 'correct') {
+      const nextUnanswered = problems.findIndex((_, i) => !statusMap[i]);
+      if (nextUnanswered !== -1) {
+        setTimeout(() => {
+          setCurrentProblemIndex(nextUnanswered);
+        }, 3000);
+      }
     }
   };
 
@@ -51,10 +61,10 @@ export default function Assignment() {
 
   const currentStatus = statusMap[currentProblemIndex] || 'unanswered';
   const sidebarStatusClass = `side-content status-${currentStatus}`;
+
   const displayStatus =
-    currentStatus === 'unanswered'
-      ? 'Unanswered'
-      : currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+    (statusMap[currentProblemIndex] || 'unanswered').charAt(0).toUpperCase() +
+    (statusMap[currentProblemIndex] || 'unanswered').slice(1);
 
   return (
     <div className="assignment-wrapper">
@@ -83,12 +93,13 @@ export default function Assignment() {
           })}
         </div>
       </div>
+
       <div className="main-section">
         <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
         <div className="problem-wrapper">
           <div className="problem-display">
             {currentProblem &&
-              skill.renderProblem(
+              skillMap[currentProblem.type]?.renderProblem(
                 userAnswers[currentProblemIndex] || '',
                 currentProblem,
                 handleInputChange,
@@ -99,6 +110,7 @@ export default function Assignment() {
             Submit
           </button>
         </div>
+
         <div className="sidebar">
           <div className="question-number-div sidebar-div">
             <p className="side-header question-header">Question</p>
@@ -107,10 +119,8 @@ export default function Assignment() {
             </p>
           </div>
           <div className="side-status-div sidebar-div">
-            <p className="side-header">Status:</p>
-            <p className={sidebarStatusClass}>
-              {displayStatus || 'Unanswered'}
-            </p>
+            <p className="side-header">Status: </p>
+            <p className={sidebarStatusClass}>{displayStatus}</p>
           </div>
           <div className="current-score-div sidebar-div">
             <p className="side-header">Score: </p>
@@ -121,7 +131,7 @@ export default function Assignment() {
           </div>
           <div className="question-time-div sidebar-div">
             <p className="side-header">Time Spent:</p>
-            <p className="side-content"></p>
+            <p></p>
           </div>
         </div>
       </div>

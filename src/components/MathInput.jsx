@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import 'mathlive';
 
 export default function MathInput({ value, onChange }) {
@@ -8,18 +8,23 @@ export default function MathInput({ value, onChange }) {
     const inputEl = ref.current;
     if (!inputEl) return;
 
-    const handle = (e) => {
-      onChange(e.target.value);
-      console.log('🧠 Raw MathInput:', e.target.value);
+    // Set the initial value
+    inputEl.setValue(value || '', { format: 'latex' });
+
+    // Define event handler to pull raw LaTeX
+    const handleInput = () => {
+      const latex = inputEl.getValue('latex');
+      console.log('🧪 Raw MathInput:', latex);
+      onChange(latex);
     };
 
-    inputEl.value = value || '';
-    inputEl.addEventListener('input', handle);
+    // Listen for changes
+    inputEl.addEventListener('input', handleInput);
 
     return () => {
-      inputEl.removeEventListener('input', handle);
+      inputEl.removeEventListener('input', handleInput);
     };
-  }, [value]); // <--- Only rebind if `value` changes
+  }, [value]);
 
   return (
     <math-field
