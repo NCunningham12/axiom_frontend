@@ -213,6 +213,13 @@
   justify-content: center;
 }
 
+.status-unanswered {
+  background-color: #bdbdbd;
+  color: black;
+  font-weight: 700 !important;
+  font-size: x-large !important;
+}
+
 .side-content {
   display: flex;
   align-items: center;
@@ -236,11 +243,6 @@
 .status-incorrect {
   background-color: #f44336;
   color: white;
-}
-
-.status-unanswered {
-  background-color: #bdbdbd;
-  color: black;
 }
 
 .side-status-div {
