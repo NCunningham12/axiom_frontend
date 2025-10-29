@@ -12,6 +12,8 @@ export default function Assignment() {
   const [problems, setProblems] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [statusMap, setStatusMap] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
     if (!assignment?.problems) return;
@@ -45,14 +47,34 @@ export default function Assignment() {
     }
 
     const status = skill.validateAnswer(input, problem);
+
+    // Update statusMap
     setStatusMap({ ...statusMap, [currentProblemIndex]: status });
 
+    // Capitalize status for modal message
+    const emojiMessages = {
+      correct: '✅ Correct! Good job.',
+      incorrect: '❌ Incorrect! Try again.',
+      partial: '⚠️ Partiall Correct!',
+      unanswered: '🤔 Unanswered!',
+    };
+
+    const message = emojiMessages[status] || `🤷 Unknown status: ${status}`;
+    setModalMessage(message);
+    setShowModal(true);
+
+    // Hide modal after 3 seconds
+    setTimeout(() => {
+      setShowModal(false);
+    }, 3000);
+
+    // Auto-navigate to next unanswered if correct
     if (status === 'correct') {
       const nextUnanswered = problems.findIndex((_, i) => !statusMap[i]);
       if (nextUnanswered !== -1) {
         setTimeout(() => {
           setCurrentProblemIndex(nextUnanswered);
-        }, 3000);
+        }, 3000); // syncs with modal fade
       }
     }
   };
@@ -135,6 +157,7 @@ export default function Assignment() {
           </div>
         </div>
       </div>
+      {showModal && <div className="fade-modal">{modalMessage}</div>}
     </div>
   );
 }

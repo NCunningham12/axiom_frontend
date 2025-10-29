@@ -29,6 +29,10 @@ export function generateProblem() {
 
 // 2. Renderer: visually render the problem
 export function renderProblem(userAnswer, problem, handleInputChange, index) {
+  const buttons = [
+    { label: '^', latex: '^{$$}' }, // Cursor will land inside braces
+  ];
+
   return (
     <div className="problem-section-render">
       <h3>Product of Powers</h3>
@@ -39,6 +43,7 @@ export function renderProblem(userAnswer, problem, handleInputChange, index) {
         onChange={(val) => {
           handleInputChange(index, val);
         }}
+        buttons={buttons}
       />
     </div>
   );

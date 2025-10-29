@@ -1,42 +1,71 @@
 import { useEffect, useRef } from 'react';
-import 'mathlive';
+import { MathfieldElement } from 'mathlive';
 
-export default function MathInput({ value, onChange }) {
+
+export default function MathInput({ value, onChange, buttons = [] }) {
   const ref = useRef(null);
 
   useEffect(() => {
     const inputEl = ref.current;
     if (!inputEl) return;
 
-    // Set the initial value
     inputEl.setValue(value || '', { format: 'latex' });
 
-    // Define event handler to pull raw LaTeX
     const handleInput = () => {
       const latex = inputEl.getValue('latex');
-      console.log('🧪 Raw MathInput:', latex);
       onChange(latex);
     };
 
-    // Listen for changes
     inputEl.addEventListener('input', handleInput);
-
-    return () => {
-      inputEl.removeEventListener('input', handleInput);
-    };
+    return () => inputEl.removeEventListener('input', handleInput);
   }, [value]);
 
+  const insertLatex = (snippet) => {
+    const inputEl = ref.current;
+    if (!inputEl) return;
+
+    inputEl.executeCommand('insert', snippet);
+    inputEl.focus();
+  };
+
   return (
-    <math-field
-      ref={ref}
+    <div
       style={{
-        width: '30%',
-        minHeight: '40px',
-        border: '1px solid #ccc',
-        borderRadius: '6px',
-        padding: '8px',
-        fontSize: '1.2rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        flexWrap: 'wrap',
       }}
-    ></math-field>
+    >
+      {buttons.map(({ label, latex }, idx) => (
+        <button
+          key={idx}
+          onClick={() => insertLatex(latex)}
+          style={{
+            padding: '6px 10px',
+            fontSize: '1rem',
+            borderRadius: '4px',
+            border: '1px solid #999',
+            background: '#eee',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          {label}
+        </button>
+      ))}
+      <math-field
+        ref={ref}
+        style={{
+          minHeight: '40px',
+          minWidth: '200px',
+          border: '1px solid #ccc',
+          borderRadius: '6px',
+          padding: '8px',
+          fontSize: '1.2rem',
+          flexShrink: 0,
+        }}
+      ></math-field>
+    </div>
   );
 }
