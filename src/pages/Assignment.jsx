@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import skillMap from '../skills/skillMap';
 import generatorMap from '../utils/generators/generatorMap.js';
@@ -14,6 +14,9 @@ export default function Assignment() {
   const [statusMap, setStatusMap] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+
+  const lastSubmittedIndex = useRef(null);
+  const lastSubmittedStatus = useRef(null);
 
   useEffect(() => {
     if (!assignment?.problems) return;
@@ -49,7 +52,13 @@ export default function Assignment() {
     const status = skill.validateAnswer(input, problem);
 
     // Update statusMap
-    setStatusMap({ ...statusMap, [currentProblemIndex]: status });
+    lastSubmittedIndex.current = currentProblemIndex;
+    lastSubmittedStatus.current = status;
+
+    setStatusMap((prev) => ({
+      ...prev,
+      [currentProblemIndex]: status,
+    }));
 
     // Capitalize status for modal message
     const emojiMessages = {
@@ -67,17 +76,21 @@ export default function Assignment() {
     setTimeout(() => {
       setShowModal(false);
     }, 3000);
+  };
 
-    // Auto-navigate to next unanswered if correct
-    if (status === 'correct') {
+  useEffect(() => {
+    if (lastSubmittedStatus.current === 'correct') {
       const nextUnanswered = problems.findIndex((_, i) => !statusMap[i]);
-      if (nextUnanswered !== -1) {
+      if (
+        nextUnanswered !== -1 &&
+        nextUnanswered !== lastSubmittedIndex.current
+      ) {
         setTimeout(() => {
           setCurrentProblemIndex(nextUnanswered);
-        }, 3000); // syncs with modal fade
+        }, 3000);
       }
     }
-  };
+  }, [statusMap]);
 
   const currentProblem = problems[currentProblemIndex];
 
@@ -147,8 +160,10 @@ export default function Assignment() {
           <div className="current-score-div sidebar-div">
             <p className="side-header">Score: </p>
             <p className="side-content">
-              {Object.values(statusMap).filter((s) => s === 'correct').length} /{' '}
-              {problems.length}
+              {(Object.values(statusMap).filter((s) => s === 'correct').length /
+                problems.length) *
+                100}
+              {'%'}
             </p>
           </div>
           <div className="question-time-div sidebar-div">
