@@ -1,10 +1,57 @@
-import React from 'react';
+import {React, useState} from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import AxiomALogo from "../assets/Axiom_A_Glow.png"
 import './Navbar.css';
 
 const NavBar = () => {
+  const [openCategory, setOpenCategory] = useState(null);
+
+  const toggleCategory = (label) => {
+    setOpenCategory(prev => prev === label ? null : label)
+  }
+
+  const navItems = [
+    {
+      label: 'Home',
+      path: '/'
+    },
+    {
+      label: 'Students',
+      children: [
+        {
+          label: 'Assignments',
+          path: '/students/assignment'
+        },
+        {
+          label: 'Practice',
+          path: '/students/practice'
+        }
+      ]
+    },
+    {
+      label: 'Teachers',
+      children: [
+        {
+          label: 'Assignments',
+          path:'/teachers/assignments'
+        },
+        {
+          label: 'Classes',
+          path:'/teachers/classes'
+        },
+        {
+          label: 'Random Student Caller',
+          children: '/teacher/rsc'
+        }
+      ]
+    },
+    {
+      label: 'Extra',
+      children: []
+    }
+  ]
+
   return (
     <div className="nav-container">
       <nav className="navbar">
@@ -14,21 +61,23 @@ const NavBar = () => {
           </Link>
         </div>
 
-        <ul className="nav-menu">
-          <li className="nav-item">
-            <Link to="/" className="nav-links">
-              Home
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/assignment-creator" className="nav-links">
-              Math
-            </Link>
-          </li>
-          <li className="nav-item">Teachers</li>
-          <li className="nav-item">Tools</li>
-          <li className="nav-item">Help</li>
-        </ul>
+        <div className="nav-menu">
+          {navItems.map((item) => (
+            <div className="menu" key={item.label}>
+              <button onClick={() => toggleCategory(item.label)}>
+                {item.label}
+              </button>
+
+              {openCategory === item.label && (
+                <div className="submenu">
+                  {item.children.map((child) => (
+                    <a key={child.label} href={child.path}>{child.label}</a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))};
+        </div>
 
         <div className="navbar-right">
           <Button>Login</Button>
