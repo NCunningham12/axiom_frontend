@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import skillMap from '../skills/skillMap';
 import generatorMap from '../utils/generators/generatorMap.js';
 import './Assignment.css';
+import { InlineMath } from 'react-katex';
 
 export default function Assignment() {
   const location = useLocation();
@@ -64,7 +65,7 @@ export default function Assignment() {
     const emojiMessages = {
       correct: '✅ Correct! Good job.',
       incorrect: '❌ Incorrect! Try again.',
-      partial: '⚠️ Partiall Correct!',
+      partial: '⚠️ Partially Correct!',
       unanswered: '🤔 Unanswered!',
     };
 
@@ -100,6 +101,8 @@ export default function Assignment() {
   const displayStatus =
     (statusMap[currentProblemIndex] || 'unanswered').charAt(0).toUpperCase() +
     (statusMap[currentProblemIndex] || 'unanswered').slice(1);
+
+  console.log("Problem answer", userAnswers[currentProblemIndex]);
 
   return (
     <div className="assignment-wrapper">
@@ -139,6 +142,11 @@ export default function Assignment() {
                 currentProblem,
                 handleInputChange,
                 currentProblemIndex
+              )}
+              {userAnswers[currentProblem] && (
+                <div className="answer-badge">
+                  Your Answer: <InlineMath math={userAnswers[currentProblemIndex]}/>
+                </div>
               )}
           </div>
           <button className="submit-btn" onClick={handleSubmit}>
