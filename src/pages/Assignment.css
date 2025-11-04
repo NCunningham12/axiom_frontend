@@ -40,6 +40,8 @@
 }
 
 .problem-display {
+  display: flex;
+  flex-direction: row;
   padding: 1rem;
   text-align: center;
   height: 90%;
@@ -181,14 +183,21 @@
 /* Answer Badge */
 
 .answer-badge {
+  height: 15%;
+  width: 20%;
   margin-top: 10px;
   background-color: #f0f0f0;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 1rem;
   color: #333;
-  display: inline-block;
-  border-left: 4px solid #2196f3;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  border-left: 4px solid #008000;
   animation: fadeIn 0.3s ease-in;
 }
 

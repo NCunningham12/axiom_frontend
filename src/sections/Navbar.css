@@ -36,12 +36,13 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 2rem;
+  gap: 8rem;
   position: relative;
 }
 
 .nav-item {
   color: white;
+  background-color: #000000;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -55,4 +56,15 @@
 .submenu {
   display: flex;
   flex-direction: column;
+  position: absolute;
+  background-color: #000000;
+  padding: 20px;
+}
+
+.submenu-item {
+  color: white;
+}
+
+.submenu-item:hover {
+  color: #008000;
 }

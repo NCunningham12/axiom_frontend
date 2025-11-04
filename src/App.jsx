@@ -16,9 +16,9 @@ function App() {
         <div className="main-wrapper">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/assignment-creator" element={<AssignmentCreator />} />
-            <Route path="/assignment-editor" element={<AssignmentEditor />} />
-            <Route path="/assignment" element={<Assignment />} />
+            <Route path="/teachers/assignment-creator" element={<AssignmentCreator />} />
+            <Route path="/teachers/assignment-editor" element={<AssignmentEditor />} />
+            <Route path="/students/assignment" element={<Assignment />} />
           </Routes>
         </div>
         <Footer />

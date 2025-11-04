@@ -28,7 +28,7 @@ const AssignmentCreator = () => {
     }));
 
     console.log('Navigating with assignmentSkills:', skillsWithIds);
-    navigate('/assignment-editor', { state: { problems: skillsWithIds } });
+    navigate('/teachers/assignment-editor', { state: { problems: skillsWithIds } });
   };
 
   const grade = '8th';

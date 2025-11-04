@@ -68,7 +68,7 @@ const AssignmentEditor = () => {
       problems: generatedProblems,
     };
 
-    navigate('/assignment', { state: { assignment: newAssignment } });
+    navigate('/students/assignment', { state: { assignment: newAssignment } });
   };
 
   return (

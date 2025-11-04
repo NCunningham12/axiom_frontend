@@ -102,7 +102,7 @@ export default function Assignment() {
     (statusMap[currentProblemIndex] || 'unanswered').charAt(0).toUpperCase() +
     (statusMap[currentProblemIndex] || 'unanswered').slice(1);
 
-  console.log("Problem answer", userAnswers[currentProblemIndex]);
+  console.log('Problem answer', userAnswers[currentProblemIndex]);
 
   return (
     <div className="assignment-wrapper">
@@ -143,11 +143,12 @@ export default function Assignment() {
                 handleInputChange,
                 currentProblemIndex
               )}
-              {userAnswers[currentProblem] && (
-                <div className="answer-badge">
-                  Your Answer: <InlineMath math={userAnswers[currentProblemIndex]}/>
-                </div>
-              )}
+            {statusMap[currentProblemIndex] && (
+              <div className="answer-badge">
+                Your Answer:
+                <InlineMath math={userAnswers[currentProblemIndex]} />
+              </div>
+            )}
           </div>
           <button className="submit-btn" onClick={handleSubmit}>
             Submit
@@ -168,9 +169,12 @@ export default function Assignment() {
           <div className="current-score-div sidebar-div">
             <p className="side-header">Score: </p>
             <p className="side-content">
-              {(Object.values(statusMap).filter((s) => s === 'correct').length /
-                problems.length) *
-                100}
+              {(
+                (Object.values(statusMap).filter((s) => s === 'correct')
+                  .length /
+                  problems.length) *
+                100
+              ).toFixed(2)}
               {'%'}
             </p>
           </div>

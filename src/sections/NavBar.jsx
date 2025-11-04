@@ -1,56 +1,60 @@
-import {React, useState} from 'react';
+import { React, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
-import AxiomALogo from "../assets/Axiom_A_Glow.png"
+import AxiomALogo from '../assets/Axiom_A_Glow.png';
 import './Navbar.css';
 
 const NavBar = () => {
   const [openCategory, setOpenCategory] = useState(null);
 
   const toggleCategory = (label) => {
-    setOpenCategory(prev => prev === label ? null : label)
-  }
+    setOpenCategory((prev) => (prev === label ? null : label));
+  };
 
   const navItems = [
     {
       label: 'Home',
-      path: '/'
+      path: '/',
     },
     {
-      label: 'Students',
+      label: 'Students ▼',
       children: [
         {
           label: 'Assignments',
-          path: '/students/assignment'
+          path: '/students/assignment',
         },
         {
           label: 'Practice',
-          path: '/students/practice'
-        }
-      ]
+          path: '/students/practice',
+        },
+      ],
     },
     {
-      label: 'Teachers',
+      label: 'Teachers ▼',
       children: [
         {
+          label: 'Create Assignment',
+          path: '/teachers/assignment-creator',
+        },
+        {
           label: 'Assignments',
-          path:'/teachers/assignments'
+          path: '/teachers/assignments',
         },
         {
           label: 'Classes',
-          path:'/teachers/classes'
+          path: '/teachers/classes',
         },
         {
           label: 'Random Student Caller',
-          children: '/teacher/rsc'
-        }
-      ]
+          children: '/teacher/rsc',
+        },
+      ],
     },
     {
       label: 'Extra',
-      children: []
-    }
-  ]
+      children: [],
+    },
+  ];
 
   return (
     <div className="nav-container">
@@ -63,20 +67,25 @@ const NavBar = () => {
 
         <div className="nav-menu">
           {navItems.map((item) => (
-            <div className="menu" key={item.label}>
-              <button onClick={() => toggleCategory(item.label)}>
+            <div key={item.label}>
+              <a
+                className="nav-item"
+                onClick={() => toggleCategory(item.label)}
+              >
                 {item.label}
-              </button>
+              </a>
 
               {openCategory === item.label && (
                 <div className="submenu">
                   {item.children.map((child) => (
-                    <a key={child.label} href={child.path}>{child.label}</a>
+                    <a className='submenu-item' key={child.label} href={child.path}>
+                      {child.label}
+                    </a>
                   ))}
                 </div>
               )}
             </div>
-          ))};
+          ))}
         </div>
 
         <div className="navbar-right">
