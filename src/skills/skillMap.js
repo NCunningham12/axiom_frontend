@@ -1,4 +1,4 @@
-import * as productOfPowers from './productOfPowers';
+import * as productOfPowers from './exponents/productOfPowers';
 
 // Add more skill files here
 const rawSkills = {

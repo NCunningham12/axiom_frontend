@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
-import MathInput from '../components/MathInput';
+import MathInput from '../../components/MathInput';
 
 // 1. Generator: create the dynamic problem
 export function generateProblem() {

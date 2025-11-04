@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import AxiomALogo from '../assets/Axiom_A_Glow.png';
 import './Navbar.css';
+import path from 'path';
 
 const NavBar = () => {
   const [openCategory, setOpenCategory] = useState(null);
@@ -51,7 +52,7 @@ const NavBar = () => {
       ],
     },
     {
-      label: 'Extra',
+      label: 'Extra ▼',
       children: [],
     },
   ];
@@ -68,21 +69,29 @@ const NavBar = () => {
         <div className="nav-menu">
           {navItems.map((item) => (
             <div key={item.label}>
-              <a
-                className="nav-item"
-                onClick={() => toggleCategory(item.label)}
-              >
-                {item.label}
-              </a>
+              {item.children ? (
+                <>
+                  <a
+                    className="nav-item"
+                    onClick={() => toggleCategory(item.label)}
+                  >
+                    {item.label}
+                  </a>
 
-              {openCategory === item.label && (
-                <div className="submenu">
-                  {item.children.map((child) => (
-                    <a className='submenu-item' key={child.label} href={child.path}>
-                      {child.label}
-                    </a>
-                  ))}
-                </div>
+                  {openCategory === item.label && (
+                    <div className="submenu">
+                      {item.children.map((child) => (
+                        <a className='submenu-item' key={child.label} href={child.path}>
+                          {child.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+              </>
+            ) : (
+                <a href={item.path} className="nav-item">
+                  {item.label}
+                </a>
               )}
             </div>
           ))}

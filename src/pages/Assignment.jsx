@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import skillMap from '../skills/skillMap';
+import skillMap from '../skills/skillMap.js';
 import generatorMap from '../utils/generators/generatorMap.js';
 import './Assignment.css';
 import { InlineMath } from 'react-katex';
