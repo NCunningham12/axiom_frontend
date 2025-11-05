@@ -37,10 +37,10 @@ export function renderProblem(userAnswer, problem, handleInputChange, index) {
         read-only
         virtual-keyboard-mode="off"
       >
-        {'\\placeholder{}^{\\placeholder{}}'}
+        {'x^{\\placeholder{}}'}
       </math-field>
     ),
-    latex: '\\placeholder{}^{\\placeholder{}}',
+    latex: '^{\\placeholder{}}',
   },
 ];
 
@@ -97,3 +97,5 @@ export function validateAnswer(input, problem) {
 
   return 'incorrect';
 }
+
+// 4. Editor Interface
