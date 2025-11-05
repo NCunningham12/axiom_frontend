@@ -3,7 +3,7 @@
 ---
 
 ## 🔥 Priority Fixes & Bugs
-- [ ] Get rid of separate generator file and refactor assignment.jsx
+- [x] Get rid of separate generator file and refactor assignment.jsx
 - [ ] Fix validator issue with multidigit exponents
 
 ## 📄 Pages To Add

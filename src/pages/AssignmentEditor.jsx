@@ -1,11 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import skillMap from '../skills/skillMap';
 // editors
 import PythagSolvingEditor from '../components/editors/PythagSolvingEditor';
 import PoPEditor from '../components/editors/PoPEditor';
-// generators
-import generatorMap from '../utils/generators/generatorMap';
-
 import './AssignmentEditor.css';
 
 const AssignmentEditor = () => {
@@ -48,13 +46,13 @@ const AssignmentEditor = () => {
   const handleNext = () => {
     const generatedProblems = problems
       .map((prob) => {
-        const generatorFunc = generatorMap[prob.slug];
-        if (!generatorFunc) {
+        const skill = skillMap[prob.slug];
+        if (!skill) {
           console.warn(`❌ Missing generator for slug: ${prob.slug}`);
           return null;
         }
         return {
-          ...generatorFunc(),
+          ...skill.generateProblem(prob),
           skill: prob.slug,
         };
       })

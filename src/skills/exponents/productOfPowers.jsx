@@ -30,8 +30,19 @@ export function generateProblem() {
 // 2. Renderer: visually render the problem
 export function renderProblem(userAnswer, problem, handleInputChange, index) {
   const buttons = [
-    { label: '^', latex: '^{$$}' }, // Cursor will land inside braces
-  ];
+  {
+    label: (
+      <math-field
+        class="mathlive-placeholder-button"
+        read-only
+        virtual-keyboard-mode="off"
+      >
+        {'\\placeholder{}^{\\placeholder{}}'}
+      </math-field>
+    ),
+    latex: '\\placeholder{}^{\\placeholder{}}',
+  },
+];
 
   return (
     <div className="problem-section-render">

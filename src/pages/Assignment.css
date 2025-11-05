@@ -277,6 +277,18 @@
   transition: background-color 0.3s ease;
 }
 
+/* Mathlive Button */
+
+.mathlive-placeholder-button {
+  --contains-highlight: 1;
+  --caret-color: #007bff;
+  --placeholder-color: #007bff;
+  background: transparent;
+  border: none;
+  pointer-events: none;
+  font-size: 1.2rem;
+}
+
 /* Modal */
 
 .fade-modal {

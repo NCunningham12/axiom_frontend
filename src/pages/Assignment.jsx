@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import skillMap from '../skills/skillMap.js';
-import generatorMap from '../utils/generators/generatorMap.js';
 import './Assignment.css';
 import { InlineMath } from 'react-katex';
 
@@ -24,12 +23,14 @@ export default function Assignment() {
 
     const newProblems = assignment.problems
       .map((problemConfig) => {
-        const generator = generatorMap[problemConfig.type];
-        if (!generator) {
-          console.warn(`No generator found for type: ${problemConfig.type}`);
+        const skill = skillMap[problemConfig.type];
+        if (!skill || typeof skill.generateProblem !== 'function') {
+          console.warn(
+            `No valid skill or generator found for type: ${problemConfig.type}`
+          );
           return null;
         }
-        return generator();
+        return skill.generateProblem(problemConfig);
       })
       .filter(Boolean);
 
@@ -101,8 +102,6 @@ export default function Assignment() {
   const displayStatus =
     (statusMap[currentProblemIndex] || 'unanswered').charAt(0).toUpperCase() +
     (statusMap[currentProblemIndex] || 'unanswered').slice(1);
-
-  console.log('Problem answer', userAnswers[currentProblemIndex]);
 
   return (
     <div className="assignment-wrapper">
