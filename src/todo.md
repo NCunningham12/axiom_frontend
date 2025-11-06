@@ -8,6 +8,9 @@
 - [x] Fix validator issue with multidigit exponents
 - [ ] Fix Nested Exponents input
 
+## 🪳 Minor Fixes & Bugs
+- [ ] "Your Answer" changing onChange instead of onSubmit
+
 ## 📄 Pages To Add
 - [ ] Default NavBar
 - [ ] About Page

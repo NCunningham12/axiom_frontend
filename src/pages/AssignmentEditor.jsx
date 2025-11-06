@@ -24,18 +24,19 @@ const AssignmentEditor = () => {
     console.log('problems in useState are: ', problems);
   });
 
-  const renderEditor = (type) => {
-    switch (type) {
-      case 'Solving PT':
-        return <PythagSolvingEditor />;
-      case 'Exponent Rules (Product of Powers)':
-        return <PoPEditor />;
-      default:
-        return (
-          <div style={{ color: '#999' }}>
-            ⚠️ No editor available for this type.
-          </div>
-        );
+  const renderEditor = (slug) => {
+    const skill = skillMap[slug];
+    console.log('SkillMap; ', skillMap);
+    console.log('Skill for slug: ', slug, skillMap[slug]);
+    if (skill && typeof skill.problemEditor === 'function') {
+      const EditorComponent = skill.problemEditor;
+      return <EditorComponent />;
+    } else {
+      return (
+        <div style={{ color: '#999' }}>
+          ⚠️ No editor available for this type.
+        </div>
+      );
     }
   };
 
@@ -96,21 +97,28 @@ const AssignmentEditor = () => {
         <div className="editor-pane">
           <h2>Editor Pane</h2>
           {selectedProblem ? (
-            <div>
-              <p>
-                <strong>ID:</strong> {selectedProblem.id} <br />
-                <strong>Name:</strong> {selectedProblem.name}
-              </p>
-              <div className="editor-inner-pane">
-                {renderEditor(selectedProblem.name)}
+            <div className="editor-render">
+              <div className="editor-pane-header">
+                <p className="editor-header">
+                  <strong>Question:</strong> {selectedProblem.id} <br />
+                </p>
+                <p className="editor-header">
+                  <strong>Name:</strong> {selectedProblem.name}
+                </p>
               </div>
+              {renderEditor(selectedProblem.slug)}
             </div>
           ) : (
             <p>Select a problem to edit</p>
           )}
-          <button className="next" onClick={handleNext}>
-            Next
-          </button>
+          <div className="button-wrapper">
+            <button className="next-button" onClick={handleNext}>
+              Next
+            </button>
+            <button className="cancel-button" onClick={handleNext}>
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>

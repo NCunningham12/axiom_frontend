@@ -6,7 +6,12 @@ const rawSkills = {
 };
 
 // Validate that each skill module has the required exports
-const REQUIRED_KEYS = ['generateProblem', 'renderProblem', 'validateAnswer'];
+const REQUIRED_KEYS = [
+  'generateProblem',
+  'renderProblem',
+  'validateAnswer',
+  'problemEditor',
+];
 
 const skillMap = {};
 
