@@ -39,6 +39,12 @@
   justify-content: space-between;
 }
 
+.problem {
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+}
+
 .problem-display {
   display: flex;
   flex-direction: row;
@@ -46,6 +52,7 @@
   text-align: center;
   height: 90%;
   position: relative;
+  justify-content: center;
 }
 
 .problem-section-render {

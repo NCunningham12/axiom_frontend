@@ -35,6 +35,8 @@ export default function Assignment() {
       .filter(Boolean);
 
     setProblems(newProblems);
+
+    setUserAnswers(Array(newProblems.length).fill(''));
   }, [assignment]);
 
   const handleInputChange = (index, input) => {
@@ -135,13 +137,16 @@ export default function Assignment() {
         <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
         <div className="problem-wrapper">
           <div className="problem-display">
-            {currentProblem &&
-              skillMap[currentProblem.type]?.renderProblem(
-                userAnswers[currentProblemIndex] || '',
-                currentProblem,
-                handleInputChange,
-                currentProblemIndex
-              )}
+            {currentProblem && (
+              <div className="problem" key={currentProblemIndex}>
+                {skillMap[currentProblem.type]?.renderProblem(
+                  userAnswers[currentProblemIndex] || '',
+                  currentProblem,
+                  handleInputChange,
+                  currentProblemIndex
+                )}
+              </div>
+            )}
             {statusMap[currentProblemIndex] && (
               <div className="answer-badge">
                 Your Answer:
