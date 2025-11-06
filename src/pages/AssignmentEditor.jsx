@@ -1,9 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import skillMap from '../skills/skillMap';
-// editors
-import PythagSolvingEditor from '../components/editors/PythagSolvingEditor';
-import PoPEditor from '../components/editors/PoPEditor';
 import './AssignmentEditor.css';
 
 const AssignmentEditor = () => {

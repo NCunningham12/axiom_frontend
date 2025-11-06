@@ -202,8 +202,14 @@
 }
 
 @keyframes fadeIn {
-  from {opacity: 0; transform: translateY(5px);}
-  to {opacity: 1; transform: translateY(0);}
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Sidebar */
@@ -279,15 +285,41 @@
 
 /* Mathlive Button */
 
-.mathlive-placeholder-button {
-  --contains-highlight: 1;
-  --caret-color: #007bff;
-  --placeholder-color: #007bff;
-  background: transparent;
-  border: none;
-  pointer-events: none;
-  font-size: 1.2rem;
+math-field::part(container),
+math-field::part(content),
+math-field::part(math),
+math-field::part(mathfield) {
+  pointer-events: none !important;
+  user-select: none;
 }
+
+math-field.mathlive-placeholder-button {
+  width: 155%;
+  height: 100%;
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  align-self: center;
+  font-size: 1.2rem;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* math-field.mathlive-placeholder-button:hover {
+  background: #f0f0f0;
+  border-radius: 6px;
+}
+
+math-field.mathlive-placeholder-button:active {
+  background: #e0e0e0;
+  transform: scale(0.97);
+}
+
+math-field.mathlive-placeholder-button {
+  cursor: pointer;
+} */
 
 /* Modal */
 

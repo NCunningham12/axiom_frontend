@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { MathfieldElement } from 'mathlive';
 
-
 export default function MathInput({ value, onChange, buttons = [] }) {
   const ref = useRef(null);
 
