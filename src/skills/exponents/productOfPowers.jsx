@@ -29,6 +29,8 @@ export function generateProblem() {
 
 // 2. Renderer: visually render the problem
 export function renderProblem(userAnswer, problem, handleInputChange, index) {
+  let insertLatexFn = () => {};
+
   const buttons = [
     {
       label: (
@@ -36,11 +38,11 @@ export function renderProblem(userAnswer, problem, handleInputChange, index) {
           class="mathlive-placeholder-button"
           read-only
           virtual-keyboard-mode="off"
+          onClick={() => insertLatexFn('^\\placeholder{}')}
         >
           {'x^{\\placeholder{}}'}
         </math-field>
       ),
-      latex: '^{\\placeholder{}}',
     },
   ];
 
@@ -55,6 +57,9 @@ export function renderProblem(userAnswer, problem, handleInputChange, index) {
           handleInputChange(index, val);
         }}
         buttons={buttons}
+        onInsertLatex={(fn) => {
+          insertLatexFn = fn;
+        }}
       />
     </div>
   );
@@ -69,8 +74,9 @@ function sanitizeMathInput(input) {
   }
   return (input || '')
     .replace(/\\text\{(.*?)\}/g, '$1') // convert \text{x} to x
-    .replace(/\\?/g, '') // remove backslashes
+    .replace(/\\ /g, '') // remove stray backslashes with space
     .replace(/\s+/g, '') // remove all whitespace
+    .replace(/\^\{(\d+)\}/g, '^$1') // convert ^{10} to ^10 for consistency
     .toLowerCase(); // make case-insensitive
 }
 
@@ -82,6 +88,9 @@ export function validateAnswer(input, problem) {
   const expected = `${expectedBase}^${expectedExponent}`;
 
   const sanitized = sanitizeMathInput(input);
+
+  console.log('Expected: ', expected);
+  console.log('Sanitized: ', sanitized);
 
   if (sanitized === expected) {
     return 'correct';

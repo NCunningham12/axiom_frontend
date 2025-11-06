@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { MathfieldElement } from 'mathlive';
 
-export default function MathInput({ value, onChange, buttons = [] }) {
+export default function MathInput({
+  value,
+  onChange,
+  buttons = [],
+  onInsertLatex,
+}) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -27,6 +32,12 @@ export default function MathInput({ value, onChange, buttons = [] }) {
     inputEl.focus();
   };
 
+  useEffect(() => {
+    if (onInsertLatex) {
+      onInsertLatex(insertLatex);
+    }
+  }, [onInsertLatex]);
+
   return (
     <div
       style={{
@@ -36,22 +47,14 @@ export default function MathInput({ value, onChange, buttons = [] }) {
         flexWrap: 'wrap',
       }}
     >
-      {buttons.map(({ label, latex }, idx) => (
-        <button
+      {buttons.map(({ label }, idx) => (
+        <div
           key={idx}
-          onClick={() => insertLatex(latex)}
-          style={{
-            padding: '6px 10px',
-            fontSize: '1rem',
-            borderRadius: '4px',
-            border: '1px solid #999',
-            background: '#eee',
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}
+          className="math-button-wrapper"
+          style={{ marginRight: '8px', display: 'inline-block' }}
         >
           {label}
-        </button>
+        </div>
       ))}
       <math-field
         ref={ref}

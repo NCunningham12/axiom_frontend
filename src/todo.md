@@ -4,8 +4,9 @@
 
 ## 🔥 Priority Fixes & Bugs
 - [x] Get rid of separate generator file and refactor assignment.jsx
-- [ ] Exponent Button fully clickable
-- [ ] Fix validator issue with multidigit exponents
+- [x] Exponent Button fully clickable
+- [x] Fix validator issue with multidigit exponents
+- [ ] Fix Nested Exponents input
 
 ## 📄 Pages To Add
 - [ ] Default NavBar
