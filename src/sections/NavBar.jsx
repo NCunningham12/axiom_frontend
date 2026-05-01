@@ -22,7 +22,7 @@ const NavBar = () => {
       children: [
         {
           label: 'Assignments',
-          path: '/students/assignment',
+          path: '/students/student-page',
         },
         {
           label: 'Practice',
@@ -39,7 +39,7 @@ const NavBar = () => {
         },
         {
           label: 'Assignments',
-          path: '/teachers/assignments',
+          path: '/teachers/assignment-list',
         },
         {
           label: 'Classes',
