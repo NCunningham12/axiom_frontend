@@ -3,9 +3,6 @@
 ---
 
 ## 🔥 Priority Fixes & Bugs
-- [x] Get rid of separate generator file and refactor assignment.jsx
-- [x] Exponent Button fully clickable
-- [x] Fix validator issue with multidigit exponents
 - [ ] Fix Nested Exponents input
 
 ## 🪳 Minor Fixes & Bugs

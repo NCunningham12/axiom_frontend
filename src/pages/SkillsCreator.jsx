@@ -17,7 +17,7 @@ const SkillsCreator = () => {
 
   const handleRemove = (indexToRemove) => {
     setAssignmentSkills((prev) =>
-      prev.filter((_, index) => index !== indexToRemove)
+      prev.filter((_, index) => index !== indexToRemove),
     );
   };
 
@@ -33,15 +33,17 @@ const SkillsCreator = () => {
 
   const handleAddSkill = (skill) => {
     setAssignmentSkills((prev) => {
-      const alreadyAdded = prev.some((existingSkill) => existingSkill.slug === skill.slug);
+      const alreadyAdded = prev.some(
+        (existingSkill) => existingSkill.slug === skill.slug,
+      );
 
       if (alreadyAdded) {
         return prev;
       }
 
       return [...prev, skill];
-    })
-  }
+    });
+  };
 
   const grade = '8th';
   const domains = curriculum[grade].domains;
@@ -87,7 +89,7 @@ const SkillsCreator = () => {
                       className="sub-button"
                       onClick={() =>
                         setExpandedConcept((prev) =>
-                          prev === concept.id ? null : concept.id
+                          prev === concept.id ? null : concept.id,
                         )
                       }
                     >
@@ -96,20 +98,28 @@ const SkillsCreator = () => {
 
                     {expandedConcept === concept.id && (
                       <ul>
-                        {concept.skills.map((skill) => (
-                          <li className="topic-li" key={skill.slug}>
-                            <span>{skill.name}</span>
-                            <button
-                              className="add-btn"
-                              onClick={() => {
-                                console.log(skill.name);
-                                handleAddSkill(skill);
-                              }}
-                            >
-                              Add
-                            </button>
-                          </li>
-                        ))}
+                        {concept.skills.map((skill) => {
+                          const alreadyAdded = assignmentSkills.some(
+                            (existingSkill) =>
+                              existingSkill.slug === skill.slug,
+                          );
+
+                          return (
+                            <li className="topic-li" key={skill.slug}>
+                              <span>{skill.name}</span>
+                              <button
+                                className="add-btn"
+                                disabled={alreadyAdded}
+                                onClick={() => {
+                                  console.log(skill.name);
+                                  handleAddSkill(skill);
+                                }}
+                              >
+                                {alreadyAdded ? 'Added' : 'Add'}
+                              </button>
+                            </li>
+                          );
+                        })}
                       </ul>
                     )}
                   </div>
@@ -146,4 +156,3 @@ const SkillsCreator = () => {
 };
 
 export default SkillsCreator;
-
