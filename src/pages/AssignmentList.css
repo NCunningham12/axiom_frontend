@@ -1,0 +1,57 @@
+.assignment-list-container {
+    background-color: green;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.assignment-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    background-color: lightgray;
+    width: 90%;
+    height: 90%;
+    justify-content: center;
+    align-items: center;
+}
+
+.assignment-list-title-section {
+    display: flex;
+    flex-direction: column;
+    background-color: darkblue;
+    width: 100%;
+    height: 15%;
+    justify-content: center;
+    align-items: center;
+}
+
+.assignment-list-title {
+    display: flex;
+    background-color: gray;
+    border: 2px solid purple;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: start;
+}
+
+.assignment-list-body {
+    display: flex;
+    background-color: gray;
+    width: 100%;
+    height: 90%;
+    justify-content: center;
+    align-items: start;
+}
+
+.assignment-section {
+    display: flex;
+    border: solid 2px black;
+    background-color: lightgreen;
+    width: 100%;
+    height: 150px;
+    justify-content: center;
+    align-items: start;
+}

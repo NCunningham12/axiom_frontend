@@ -28,8 +28,20 @@ const SkillsCreator = () => {
     }));
 
     console.log('Navigating with assignmentSkills:', skillsWithIds);
-    navigate('/teachers/assignment-editor', { state: { problems: skillsWithIds } });
+    navigate('/teachers/skills-editor', { state: { problems: skillsWithIds } });
   };
+
+  const handleAddSkill = (skill) => {
+    setAssignmentSkills((prev) => {
+      const alreadyAdded = prev.some((existingSkill) => existingSkill.slug === skill.slug);
+
+      if (alreadyAdded) {
+        return prev;
+      }
+
+      return [...prev, skill];
+    })
+  }
 
   const grade = '8th';
   const domains = curriculum[grade].domains;
@@ -91,7 +103,7 @@ const SkillsCreator = () => {
                               className="add-btn"
                               onClick={() => {
                                 console.log(skill.name);
-                                setAssignmentSkills((prev) => [...prev, skill]);
+                                handleAddSkill(skill);
                               }}
                             >
                               Add
