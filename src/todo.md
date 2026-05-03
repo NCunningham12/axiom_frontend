@@ -3,15 +3,19 @@
 ---
 
 ## 🔥 Priority Fixes & Bugs
+
+- [ ] Consolidate Tradional/Skills Creator Page
 - [ ] Fix Nested Exponents input
 
 ## 🪳 Minor Fixes & Bugs
+
 - [ ] "Your Answer" changing onChange instead of onSubmit
 
 ## 📄 Pages To Add
+
 - [ ] Default NavBar
 - [ ] About Page
-- [ ] AssignmentEditor.jsx content
+- [ ] AssignmentEditor.jsx Transition to
 - [ ] Student Assignments Page
 - [ ] ClassManagement.jsx
 - [ ] AnalyticsDashboard.jsx
@@ -21,10 +25,12 @@
 - [ ] AdminDashboard.jsx
 
 ## 🚀 Future Features
+
 - [ ] Global Dark Mode Toggle
 - [ ] "Time Spent" logic to student assignment page
 - [ ] "Submit Assignment" button
 
 ## 🧹 UI Polish
+
 - [ ] Navbar improvements
 - [ ] Assignment Creator Cleanup
