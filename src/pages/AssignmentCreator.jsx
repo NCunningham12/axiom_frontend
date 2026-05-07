@@ -7,6 +7,7 @@ const AssignmentCreator = () => {
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [expandedConcept, setExpandedConcept] = useState(null);
   const [assignmentSkills, setAssignmentSkills] = useState([]);
+  const [assignmentType, setAssignmentType] = useState("standard");
 
   const navigate = useNavigate();
 
@@ -39,6 +40,22 @@ const AssignmentCreator = () => {
   return (
     <div className="ac-container">
       <h1 className="ac-title">Assignment Creator</h1>
+      <div className="top-section">
+        <div className="type-toggle">
+          <button 
+            className={assignmentType === 'standard' ? "active" : "disabled"}
+            onClick={() => setAssignmentType("standard")}
+          >
+            Standard Assignment
+          </button>
+          <button 
+            className={assignmentType === 'skill' ? "active" : "disabled"}
+            onClick={() => setAssignmentType("skill")}
+          >
+            Skill Assignment
+          </button>
+        </div>
+      </div>
       <div className="ac-content-wrapper">
         <div className="ac-left-side ac-panel">
           {!selectedDomain ? (
@@ -132,6 +149,7 @@ const AssignmentCreator = () => {
               <label htmlFor="assignment-name">Assignment Name</label>
               <input
                 id="assignment-name"
+                className='form-input'
                 type="text"
                 name="assignmentName"
                 placeholder="Enter assignment name"
@@ -140,7 +158,7 @@ const AssignmentCreator = () => {
 
             <div className="ac-dropdown form-group">
               <label htmlFor="periods">Periods Assigned</label>
-              <select id="periods" name="periods">
+              <select id="periods" className='form-input' name="periods">
                 <option value="all">All Periods</option>
                 <option value="period1">Period 1</option>
                 <option value="period2">Period 2</option>
@@ -153,7 +171,7 @@ const AssignmentCreator = () => {
 
             <div className="form-group">
               <label htmlFor="folder">Folder</label>
-              <select id="folder" name="folder">
+              <select id="folder" className='form-input' name="folder">
                 <option value="">Select a folder</option>
                 <option value="unit-1">Unit 1</option>
                 <option value="unit-2">Unit 2</option>
@@ -165,7 +183,7 @@ const AssignmentCreator = () => {
 
             <div className="form-group">
               <label htmlFor="due-date">Due Date</label>
-              <input id="due-date" type="date" name="dueDate" />
+              <input id="due-date" className='form-input' type="date" name="dueDate" />
             </div>
 
             <div className="form-group checkbox-group">
