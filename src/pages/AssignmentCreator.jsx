@@ -37,6 +37,10 @@ const AssignmentCreator = () => {
   const grade = '8th';
   const domains = curriculum[grade].domains;
 
+  const alreadyAdded = assignmentSkills.some((existingSkill) => existingSkill.slug === skill.slug);
+  const isSkillMode = assignmentType === "skill";
+  const shouldDisableButton = isSkillMode && alreadyAdded
+
   return (
     <div className="ac-container">
       <h1 className="ac-title">Assignment Creator</h1>
@@ -108,12 +112,18 @@ const AssignmentCreator = () => {
                             <span>{skill.name}</span>
                             <button
                               className="add-btn"
+                              disabled={shouldDisableButton}
                               onClick={() => {
                                 console.log(skill.name);
+
+                                if (isSkillMode && alreadyAdded) {
+                                  return;
+                                }
+
                                 setAssignmentSkills((prev) => [...prev, skill]);
                               }}
                             >
-                              Add
+                              {shouldDisableButton ? "Added" : "Add"}
                             </button>
                           </li>
                         ))}

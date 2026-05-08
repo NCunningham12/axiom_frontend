@@ -34,12 +34,8 @@ const NavBar = () => {
       label: 'Teachers ▼',
       children: [
         {
-          label: 'Create Traditional Assignment',
+          label: 'Create Assignment',
           path: '/teachers/assignment-creator',
-        },
-        {
-          label: 'Create Skills Assignment',
-          path: '/teachers/skills-creator',
         },
         {
           label: 'Assignments',
