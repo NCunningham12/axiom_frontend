@@ -7,7 +7,7 @@ const AssignmentCreator = () => {
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [expandedConcept, setExpandedConcept] = useState(null);
   const [assignmentSkills, setAssignmentSkills] = useState([]);
-  const [assignmentType, setAssignmentType] = useState("standard");
+  const [assignmentType, setAssignmentType] = useState('standard');
 
   const navigate = useNavigate();
 
@@ -34,30 +34,44 @@ const AssignmentCreator = () => {
     });
   };
 
+  const handleAssignmentTypeChange = (clickedType) => {
+    if (clickedType === assignmentType) {
+      return;
+    }
+
+    setAssignmentSkills([]);
+    setAssignmentType(clickedType);
+  };
+
   const grade = '8th';
   const domains = curriculum[grade].domains;
-
-  const alreadyAdded = assignmentSkills.some((existingSkill) => existingSkill.slug === skill.slug);
-  const isSkillMode = assignmentType === "skill";
-  const shouldDisableButton = isSkillMode && alreadyAdded
 
   return (
     <div className="ac-container">
       <h1 className="ac-title">Assignment Creator</h1>
-      <div className="top-section">
+      <div className="ac-top-section">
         <div className="type-toggle">
-          <button 
-            className={assignmentType === 'standard' ? "active" : "disabled"}
-            onClick={() => setAssignmentType("standard")}
+          <button
+            className={assignmentType === 'standard' ? 'active' : 'disabled'}
+            onClick={() => {
+              handleAssignmentTypeChange('standard');
+            }}
           >
             Standard Assignment
           </button>
-          <button 
-            className={assignmentType === 'skill' ? "active" : "disabled"}
-            onClick={() => setAssignmentType("skill")}
+          <button
+            className={assignmentType === 'skill' ? 'active' : 'disabled'}
+            onClick={() => {
+              handleAssignmentTypeChange('skill');
+            }}
           >
             Skill Assignment
           </button>
+        </div>
+        <div className="assignment-type-title">
+          <h2>
+            {assignmentType === 'standard' ? 'Standard' : 'Skill'} Assignment
+          </h2>
         </div>
       </div>
       <div className="ac-content-wrapper">
@@ -107,26 +121,38 @@ const AssignmentCreator = () => {
 
                     {expandedConcept === concept.id && (
                       <ul>
-                        {concept.skills.map((skill) => (
-                          <li className="topic-li" key={skill.slug}>
-                            <span>{skill.name}</span>
-                            <button
-                              className="add-btn"
-                              disabled={shouldDisableButton}
-                              onClick={() => {
-                                console.log(skill.name);
+                        {concept.skills.map((skill) => {
+                          const alreadyAdded = assignmentSkills.some(
+                            (existingSkill) =>
+                              existingSkill.slug === skill.slug,
+                          );
+                          const isSkillMode = assignmentType === 'skill';
+                          const shouldDisableButton =
+                            isSkillMode && alreadyAdded;
+                          return (
+                            <li className="topic-li" key={skill.slug}>
+                              <span>{skill.name}</span>
+                              <button
+                                className="add-btn"
+                                disabled={shouldDisableButton}
+                                onClick={() => {
+                                  console.log(skill.name);
 
-                                if (isSkillMode && alreadyAdded) {
-                                  return;
-                                }
+                                  if (isSkillMode && alreadyAdded) {
+                                    return;
+                                  }
 
-                                setAssignmentSkills((prev) => [...prev, skill]);
-                              }}
-                            >
-                              {shouldDisableButton ? "Added" : "Add"}
-                            </button>
-                          </li>
-                        ))}
+                                  setAssignmentSkills((prev) => [
+                                    ...prev,
+                                    skill,
+                                  ]);
+                                }}
+                              >
+                                {shouldDisableButton ? 'Added' : 'Add'}
+                              </button>
+                            </li>
+                          );
+                        })}
                       </ul>
                     )}
                   </div>
@@ -159,7 +185,7 @@ const AssignmentCreator = () => {
               <label htmlFor="assignment-name">Assignment Name</label>
               <input
                 id="assignment-name"
-                className='form-input'
+                className="form-input"
                 type="text"
                 name="assignmentName"
                 placeholder="Enter assignment name"
@@ -168,7 +194,7 @@ const AssignmentCreator = () => {
 
             <div className="ac-dropdown form-group">
               <label htmlFor="periods">Periods Assigned</label>
-              <select id="periods" className='form-input' name="periods">
+              <select id="periods" className="form-input" name="periods">
                 <option value="all">All Periods</option>
                 <option value="period1">Period 1</option>
                 <option value="period2">Period 2</option>
@@ -181,7 +207,7 @@ const AssignmentCreator = () => {
 
             <div className="form-group">
               <label htmlFor="folder">Folder</label>
-              <select id="folder" className='form-input' name="folder">
+              <select id="folder" className="form-input" name="folder">
                 <option value="">Select a folder</option>
                 <option value="unit-1">Unit 1</option>
                 <option value="unit-2">Unit 2</option>
@@ -193,7 +219,12 @@ const AssignmentCreator = () => {
 
             <div className="form-group">
               <label htmlFor="due-date">Due Date</label>
-              <input id="due-date" className='form-input' type="date" name="dueDate" />
+              <input
+                id="due-date"
+                className="form-input"
+                type="date"
+                name="dueDate"
+              />
             </div>
 
             <div className="form-group checkbox-group">
