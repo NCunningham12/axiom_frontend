@@ -24,6 +24,7 @@ const AssignmentList = () => {
           <div className="assignment-links assignment-section">Links</div>
           <div className="assignment-list assignment-section">Assignment</div>
           <div className="assignment-periods assignment-section">Periods</div>
+          <div className="assignment-periods assignment-section">Folder</div>
           <div className="assignment-due assignment-section">Due Date</div>
         </div>
       </div>

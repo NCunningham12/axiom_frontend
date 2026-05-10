@@ -19,6 +19,8 @@ export default function Assignment() {
   const lastSubmittedStatus = useRef(null);
 
   useEffect(() => {
+    console.log('Assignment: ', assignment);
+
     if (!assignment?.problems) return;
 
     const newProblems = assignment.problems
@@ -26,7 +28,7 @@ export default function Assignment() {
         const skill = skillMap[problemConfig.type];
         if (!skill || typeof skill.generateProblem !== 'function') {
           console.warn(
-            `No valid skill or generator found for type: ${problemConfig.type}`
+            `No valid skill or generator found for type: ${problemConfig.type}`,
           );
           return null;
         }
@@ -136,6 +138,9 @@ export default function Assignment() {
       <div className="main-section">
         <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
         <div className="problem-wrapper">
+          <h2 className="assignment-title">
+            {assignment?.metadata?.assignmentName}
+          </h2>
           <div className="problem-display">
             {currentProblem && (
               <div className="problem" key={currentProblemIndex}>
@@ -143,7 +148,7 @@ export default function Assignment() {
                   userAnswers[currentProblemIndex] || '',
                   currentProblem,
                   handleInputChange,
-                  currentProblemIndex
+                  currentProblemIndex,
                 )}
               </div>
             )}

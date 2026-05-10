@@ -8,6 +8,13 @@ const AssignmentCreator = () => {
   const [expandedConcept, setExpandedConcept] = useState(null);
   const [assignmentSkills, setAssignmentSkills] = useState([]);
   const [assignmentType, setAssignmentType] = useState('standard');
+  const [assignmentMetadata, setAssignmentMetadata] = useState({
+    assignmentName: '',
+    periods: 'all',
+    folder: '',
+    dueDate: '',
+    acceptLate: false,
+  });
 
   const navigate = useNavigate();
 
@@ -22,15 +29,33 @@ const AssignmentCreator = () => {
     );
   };
 
+  const handleMetadataChange = (event) => {
+    const { name, value, type, checked } = event.target;
+
+    setAssignmentMetadata((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
   const handleNextClick = () => {
-    const skillsWithIds = assignmentSkills.map((skill, index) => ({
+    const problemsForAssignment = assignmentSkills.map((skill, index) => ({
       ...skill,
       id: index + 1,
+      type: skill.slug,
     }));
 
-    console.log('Navigating with assignmentSkills:', skillsWithIds);
-    navigate('/teachers/assignment-editor', {
-      state: { problems: skillsWithIds },
+    const assignmentData = {
+      metadata: {
+        ...assignmentMetadata,
+        assignmentType,
+      },
+      problems: problemsForAssignment,
+    };
+
+    console.log('Navigating with assignmentData:', assignmentData);
+    navigate('/students/assignment', {
+      state: { assignment: assignmentData },
     });
   };
 
@@ -45,6 +70,8 @@ const AssignmentCreator = () => {
 
   const grade = '8th';
   const domains = curriculum[grade].domains;
+
+  console.log(assignmentMetadata);
 
   return (
     <div className="ac-container">
@@ -189,12 +216,20 @@ const AssignmentCreator = () => {
                 type="text"
                 name="assignmentName"
                 placeholder="Enter assignment name"
+                value={assignmentMetadata.assignmentName}
+                onChange={handleMetadataChange}
               />
             </div>
 
             <div className="ac-dropdown form-group">
               <label htmlFor="periods">Periods Assigned</label>
-              <select id="periods" className="form-input" name="periods">
+              <select
+                id="periods"
+                className="form-input"
+                name="periods"
+                value={assignmentMetadata.periods}
+                onChange={handleMetadataChange}
+              >
                 <option value="all">All Periods</option>
                 <option value="period1">Period 1</option>
                 <option value="period2">Period 2</option>
@@ -207,7 +242,13 @@ const AssignmentCreator = () => {
 
             <div className="form-group">
               <label htmlFor="folder">Folder</label>
-              <select id="folder" className="form-input" name="folder">
+              <select
+                id="folder"
+                className="form-input"
+                name="folder"
+                value={assignmentMetadata.folder}
+                onChange={handleMetadataChange}
+              >
                 <option value="">Select a folder</option>
                 <option value="unit-1">Unit 1</option>
                 <option value="unit-2">Unit 2</option>
@@ -224,12 +265,20 @@ const AssignmentCreator = () => {
                 className="form-input"
                 type="date"
                 name="dueDate"
+                value={assignmentMetadata.dueDate}
+                onChange={handleMetadataChange}
               />
             </div>
 
             <div className="form-group checkbox-group">
               <label>
-                <input type="checkbox" name="acceptLate" />
+                <input
+                  id="acceptLate"
+                  type="checkbox"
+                  name="acceptLate"
+                  value={assignmentMetadata.acceptLate}
+                  onChange={handleMetadataChange}
+                />
                 Accept late submissions?
               </label>
             </div>
