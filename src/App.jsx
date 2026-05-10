@@ -5,6 +5,7 @@ import NavBar from './sections/NavBar';
 import Footer from './sections/Footer';
 import AssignmentCreator from './pages/AssignmentCreator';
 import Assignment from './pages/Assignment';
+import SkillAssignment from './pages/SkillAssignment';
 import AssignmentList from './pages/AssignmentList';
 import StudentPage from './pages/StudentPage';
 import './App.css';
@@ -26,6 +27,7 @@ function App() {
               element={<AssignmentList />}
             />
             <Route path="/students/assignment" element={<Assignment />} />
+            <Route path="/students/skill-assignment" element={<SkillAssignment />} />
             <Route path="/students/student-page" element={<StudentPage />} />
           </Routes>
         </div>

@@ -53,10 +53,19 @@ const AssignmentCreator = () => {
       problems: problemsForAssignment,
     };
 
-    console.log('Navigating with assignmentData:', assignmentData);
-    navigate('/students/assignment', {
-      state: { assignment: assignmentData },
-    });
+    if (assignmentType === "skill") {
+      console.log('Navigating with assignmentData:', assignmentData);
+      navigate('/students/skill-assignment', {
+        state: { assignment: assignmentData },
+      });
+    } else if (assignmentType === "standard") {
+      console.log('Navigating with assignmentData:', assignmentData);
+      navigate('/students/assignment', {
+        state: { assignment: assignmentData },
+      });
+    } else {
+      console.log("No assignment tyoe detected")
+    }
   };
 
   const handleAssignmentTypeChange = (clickedType) => {
