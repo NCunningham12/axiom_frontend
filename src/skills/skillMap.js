@@ -10,7 +10,6 @@ const REQUIRED_KEYS = [
   'generateProblem',
   'renderProblem',
   'validateAnswer',
-  'problemEditor',
 ];
 
 const skillMap = {};

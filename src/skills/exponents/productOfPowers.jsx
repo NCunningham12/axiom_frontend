@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
 import MathInput from '../../components/MathInput';
-import '../../pages/AssignmentEditor.css';
 
 // 1. Generator: create the dynamic problem
 export function generateProblem() {
@@ -106,18 +105,4 @@ export function validateAnswer(input, problem) {
   }
 
   return 'incorrect';
-}
-
-// 4. Editor Interface
-export function problemEditor() {
-  const [maxExponent, setMaxExponent] = useState(5);
-
-  return (
-    <div className="editor-grid">
-      <div className="preview-pane">
-        <h4 className="pane-header">Live Preview</h4>
-        {/* Render preview of the generated problem here */}
-      </div>
-    </div>
-  );
 }
