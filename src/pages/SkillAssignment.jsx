@@ -109,34 +109,7 @@ export default function SkillAssignment() {
 
   return (
     <div className="assignment-wrapper">
-      <div className="top-section">
-        <div className="problem-selector">
-          {problems.map((_, index) => {
-            const status = statusMap[index];
-            const isActive = index === currentProblemIndex;
-
-            let className = 'problem-tab';
-            if (status === 'correct') className += ' correct';
-            else if (status === 'partial') className += ' partial';
-            else if (status === 'incorrect') className += ' incorrect';
-
-            if (isActive) className += ' active';
-
-            return (
-              <button
-                key={index}
-                className={className}
-                onClick={() => setCurrentProblemIndex(index)}
-              >
-                {index + 1}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       <div className="main-section">
-        <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
         <div className="problem-wrapper">
           <h2 className="assignment-title">
             {assignment?.metadata?.assignmentName}
@@ -152,12 +125,6 @@ export default function SkillAssignment() {
                 )}
               </div>
             )}
-            {statusMap[currentProblemIndex] && (
-              <div className="answer-badge">
-                Your Answer:
-                <InlineMath math={userAnswers[currentProblemIndex]} />
-              </div>
-            )}
           </div>
           <button className="submit-btn" onClick={handleSubmit}>
             Submit
@@ -166,17 +133,17 @@ export default function SkillAssignment() {
 
         <div className="sidebar">
           <div className="question-number-div sidebar-div">
-            <p className="side-header question-header">Question</p>
+            <p className="side-header question-header">Score</p>
             <p className="side-content">
               {currentProblemIndex + 1} / {problems.length}
             </p>
           </div>
           <div className="side-status-div sidebar-div">
-            <p className="side-header">Status: </p>
+            <p className="side-header">Score Target: </p>
             <p className={sidebarStatusClass}>{displayStatus}</p>
           </div>
           <div className="current-score-div sidebar-div">
-            <p className="side-header">Score: </p>
+            <p className="side-header">Streak: </p>
             <p className="side-content">
               {(
                 (Object.values(statusMap).filter((s) => s === 'correct')
