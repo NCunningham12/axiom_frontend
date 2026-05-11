@@ -43,6 +43,7 @@ const AssignmentCreator = () => {
       ...skill,
       id: index + 1,
       type: skill.slug,
+      targetScore: skill.targetScore
     }));
 
     const assignmentData = {
@@ -75,6 +76,16 @@ const AssignmentCreator = () => {
 
     setAssignmentSkills([]);
     setAssignmentType(clickedType);
+  };
+
+  const handleSkillTargetChange = (index, value) => {
+    setAssignmentSkills((prev) => 
+      prev.map((skill, i) =>
+        i === index
+        ? {...skill, targetScore: Number(value)}
+        : skill
+      )
+    );
   };
 
   const grade = '8th';
@@ -278,6 +289,21 @@ const AssignmentCreator = () => {
                 onChange={handleMetadataChange}
               />
             </div>
+
+            {assignmentType === "skill" && assignmentSkills.map((skill, index) => (
+              <div className="form-group" key={index}>
+                <label>
+                  {skill.name} Score Target
+                </label>
+                <input 
+                  type="number"    
+                  className="form-input"
+                  name='targetScore'
+                  value={skill.targetScore || ''}
+                  onChange={(e) => handleSkillTargetChange(index, e.target.value)}
+                />
+              </div>
+            ))}
 
             <div className="form-group checkbox-group">
               <label>
