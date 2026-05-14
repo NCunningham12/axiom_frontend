@@ -28,7 +28,7 @@ export function generateProblem() {
 }
 
 // 2. Renderer: visually render the problem
-export function renderProblem(userAnswer, problem, handleInputChange, index) {
+export function renderProblem(userAnswer, problem, handleInputChange, index, handleSubmit) {
   let insertLatexFn = () => {};
 
   const buttons = [
@@ -60,6 +60,7 @@ export function renderProblem(userAnswer, problem, handleInputChange, index) {
         onInsertLatex={(fn) => {
           insertLatexFn = fn;
         }}
+        onSubmit={handleSubmit}
       />
     </div>
   );

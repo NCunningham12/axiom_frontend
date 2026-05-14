@@ -16,6 +16,9 @@ export default function SkillAssignment() {
   const [modalMessage, setModalMessage] = useState('');
   const [currentScore, setCurrentScore] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [timeSpent, setTimeSpent] = useState(0);
+
+  const startTimeRef = useRef(Date.now());
 
   const lastSubmittedIndex = useRef(null);
   const lastSubmittedStatus = useRef(null);
@@ -70,6 +73,22 @@ export default function SkillAssignment() {
         return nextScore;
     });
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      setTimeSpent(elapsed);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
 
   const handleSubmit = () => {
     const input = userAnswers[currentProblemIndex];
@@ -163,6 +182,7 @@ export default function SkillAssignment() {
                   currentProblem,
                   handleInputChange,
                   currentProblemIndex,
+                  handleSubmit
                 )}
               </div>
             )}
@@ -193,7 +213,7 @@ export default function SkillAssignment() {
           </div>
           <div className="question-time-div sidebar-div">
             <p className="side-header">Time Spent:</p>
-            <p></p>
+            <div className="stat-value">{formatTime(timeSpent)}</div>
           </div>
         </div>
       </div>

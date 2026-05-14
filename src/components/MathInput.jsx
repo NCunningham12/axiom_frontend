@@ -6,6 +6,7 @@ export default function MathInput({
   onChange,
   buttons = [],
   onInsertLatex,
+  onSubmit,
 }) {
   const ref = useRef(null);
 
@@ -23,6 +24,30 @@ export default function MathInput({
     inputEl.addEventListener('input', handleInput);
     return () => inputEl.removeEventListener('input', handleInput);
   }, [value]);
+
+  useEffect(() => {
+    const inputEl = ref.current;
+    if (!inputEl) return;
+
+    inputEl.focus()
+  }, [])
+
+  useEffect(() => {
+    const inputEl = ref.current;
+    if (!inputEl) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        onSubmit?.();
+      }
+    };
+
+    inputEl.addEventListener('keydown', handleKeyDown, true);
+
+    return () => inputEl.removeEventListener('keydown', handleKeyDown, true);
+  }, [onSubmit]);
 
   const insertLatex = (snippet) => {
     const inputEl = ref.current;

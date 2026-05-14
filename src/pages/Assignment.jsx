@@ -149,6 +149,7 @@ export default function Assignment() {
                   currentProblem,
                   handleInputChange,
                   currentProblemIndex,
+                  handleSubmit
                 )}
               </div>
             )}
