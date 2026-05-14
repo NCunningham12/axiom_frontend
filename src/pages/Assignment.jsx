@@ -14,6 +14,9 @@ export default function Assignment() {
   const [statusMap, setStatusMap] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [timeSpent, setTimeSpent] = useState(0);
+
+  const startTimeRef = useRef(Date.now());
 
   const lastSubmittedIndex = useRef(null);
   const lastSubmittedStatus = useRef(null);
@@ -43,6 +46,22 @@ export default function Assignment() {
 
   const handleInputChange = (index, input) => {
     setUserAnswers({ ...userAnswers, [index]: input });
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      setTimeSpent(elapsed);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleSubmit = () => {
@@ -190,7 +209,7 @@ export default function Assignment() {
           </div>
           <div className="question-time-div sidebar-div">
             <p className="side-header">Time Spent:</p>
-            <p></p>
+            <div className="side-content">{formatTime(timeSpent)}</div>
           </div>
         </div>
       </div>

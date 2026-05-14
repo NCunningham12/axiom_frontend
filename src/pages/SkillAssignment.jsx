@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import skillMap from '../skills/skillMap.js';
-import './Assignment.css';
+import './SkillAssignment.css';
 import { InlineMath } from 'react-katex';
 
 export default function SkillAssignment() {
@@ -213,7 +213,7 @@ export default function SkillAssignment() {
           </div>
           <div className="question-time-div sidebar-div">
             <p className="side-header">Time Spent:</p>
-            <div className="stat-value">{formatTime(timeSpent)}</div>
+            <div className="side-content">{formatTime(timeSpent)}</div>
           </div>
         </div>
       </div>
