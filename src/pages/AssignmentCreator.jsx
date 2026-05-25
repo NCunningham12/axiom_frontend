@@ -38,12 +38,22 @@ const AssignmentCreator = () => {
     }));
   };
 
-  const handleNextClick = () => {
+  const createAssignment = async (assignmentData) => {
+    const response = await fetch('http://localhost:5000/api/assignments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(assignmentData),
+    });
+  };
+
+  const handleNextClick = async () => {
     const problemsForAssignment = assignmentSkills.map((skill, index) => ({
       ...skill,
       id: index + 1,
       type: skill.slug,
-      targetScore: skill.targetScore
+      targetScore: skill.targetScore,
     }));
 
     const assignmentData = {
@@ -54,19 +64,22 @@ const AssignmentCreator = () => {
       problems: problemsForAssignment,
     };
 
-    if (assignmentType === "skill") {
-      console.log('Navigating with assignmentData:', assignmentData);
-      navigate('/students/skill-assignment', {
-        state: { assignment: assignmentData },
-      });
-    } else if (assignmentType === "standard") {
-      console.log('Navigating with assignmentData:', assignmentData);
-      navigate('/students/assignment', {
-        state: { assignment: assignmentData },
-      });
-    } else {
-      console.log("No assignment tyoe detected")
-    }
+    const savedAssignment = await createAssignment(assignmentData);
+    console.log('Saved assignment from backend: ', savedAssignment);
+
+    // if (assignmentType === "skill") {
+    //   console.log('Navigating with assignmentData:', assignmentData);
+    //   navigate('/students/skill-assignment', {
+    //     state: { assignment: assignmentData },
+    //   });
+    // } else if (assignmentType === "standard") {
+    //   console.log('Navigating with assignmentData:', assignmentData);
+    //   navigate('/students/assignment', {
+    //     state: { assignment: assignmentData },
+    //   });
+    // } else {
+    //   console.log("No assignment type detected")
+    // }
   };
 
   const handleAssignmentTypeChange = (clickedType) => {
@@ -79,12 +92,10 @@ const AssignmentCreator = () => {
   };
 
   const handleSkillTargetChange = (index, value) => {
-    setAssignmentSkills((prev) => 
+    setAssignmentSkills((prev) =>
       prev.map((skill, i) =>
-        i === index
-        ? {...skill, targetScore: Number(value)}
-        : skill
-      )
+        i === index ? { ...skill, targetScore: Number(value) } : skill,
+      ),
     );
   };
 
@@ -290,20 +301,21 @@ const AssignmentCreator = () => {
               />
             </div>
 
-            {assignmentType === "skill" && assignmentSkills.map((skill, index) => (
-              <div className="form-group" key={index}>
-                <label>
-                  {skill.name} Score Target
-                </label>
-                <input 
-                  type="number"    
-                  className="form-input"
-                  name='targetScore'
-                  value={skill.targetScore || ''}
-                  onChange={(e) => handleSkillTargetChange(index, e.target.value)}
-                />
-              </div>
-            ))}
+            {assignmentType === 'skill' &&
+              assignmentSkills.map((skill, index) => (
+                <div className="form-group" key={index}>
+                  <label>{skill.name} Score Target</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    name="targetScore"
+                    value={skill.targetScore || ''}
+                    onChange={(e) =>
+                      handleSkillTargetChange(index, e.target.value)
+                    }
+                  />
+                </div>
+              ))}
 
             <div className="form-group checkbox-group">
               <label>
