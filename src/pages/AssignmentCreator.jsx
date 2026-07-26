@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './AssignmentCreator.css';
 import { Link, useNavigate } from 'react-router-dom';
 import curriculum from '../curriculum';
+import skillMap from '../skills/skillMap';
 
 const AssignmentCreator = () => {
   const [selectedDomain, setSelectedDomain] = useState(null);
@@ -46,15 +47,41 @@ const AssignmentCreator = () => {
       },
       body: JSON.stringify(assignmentData),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create assignment.');
+    }
+
+    return response.json();
   };
 
   const handleNextClick = async () => {
-    const problemsForAssignment = assignmentSkills.map((skill, index) => ({
-      ...skill,
-      id: index + 1,
-      type: skill.slug,
-      targetScore: skill.targetScore,
-    }));
+    const problemsForAssignment = assignmentSkills.map((skill, index) => {
+      if (assignmentType === 'skill') {
+        return {
+          ...skill,
+          id: index + 1,
+          type: skill.slug,
+          targetScore: skill.targetScore,
+        };
+      }
+
+      const skillModule = skillMap[skill.slug];
+
+      if (!skillModule) {
+        throw new Error(`No skill module found for slug: ${skill.slug}`);
+      }
+
+      const generatedProblem = skillModule.generateProblem();
+
+      return {
+        ...skill,
+        id: index + 1,
+        type: skill.slug,
+        problemData: generatedProblem,
+      };
+    });
 
     const assignmentData = {
       metadata: {
@@ -66,20 +93,6 @@ const AssignmentCreator = () => {
 
     const savedAssignment = await createAssignment(assignmentData);
     console.log('Saved assignment from backend: ', savedAssignment);
-
-    // if (assignmentType === "skill") {
-    //   console.log('Navigating with assignmentData:', assignmentData);
-    //   navigate('/students/skill-assignment', {
-    //     state: { assignment: assignmentData },
-    //   });
-    // } else if (assignmentType === "standard") {
-    //   console.log('Navigating with assignmentData:', assignmentData);
-    //   navigate('/students/assignment', {
-    //     state: { assignment: assignmentData },
-    //   });
-    // } else {
-    //   console.log("No assignment type detected")
-    // }
   };
 
   const handleAssignmentTypeChange = (clickedType) => {

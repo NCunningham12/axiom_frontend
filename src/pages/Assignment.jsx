@@ -28,14 +28,14 @@ export default function Assignment() {
 
     const newProblems = assignment.problems
       .map((problemConfig) => {
-        const skill = skillMap[problemConfig.type];
-        if (!skill || typeof skill.generateProblem !== 'function') {
+        if (!problemConfig.problemData) {
           console.warn(
-            `No valid skill or generator found for type: ${problemConfig.type}`,
+            `No persisted problem data found for type: ${problemConfig.type}`,
           );
           return null;
         }
-        return skill.generateProblem(problemConfig);
+
+        return problemConfig.problemData;
       })
       .filter(Boolean);
 
@@ -168,7 +168,7 @@ export default function Assignment() {
                   currentProblem,
                   handleInputChange,
                   currentProblemIndex,
-                  handleSubmit
+                  handleSubmit,
                 )}
               </div>
             )}
