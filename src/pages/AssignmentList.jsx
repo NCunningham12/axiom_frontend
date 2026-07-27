@@ -50,15 +50,15 @@ const AssignmentList = () => {
 
         <div className="assignment-list-body">
           <div className="assignment-header-row">
-            <div className="assignment-links assignment-section">
+            <div className="assignment-links header-section">
               Assignment
             </div>
-            <div className="assignment-list assignment-section">
+            <div className="assignment-list header-section">
               Assignment Type
             </div>
-            <div className="assignment-periods assignment-section">Periods</div>
-            <div className="assignment-periods assignment-section">Folder</div>
-            <div className="assignment-due assignment-section">Due Date</div>
+            <div className="assignment-periods header-section">Periods</div>
+            <div className="assignment-periods header-section">Folder</div>
+            <div className="assignment-due header-section">Due Date</div>
           </div>
 
           {assignments.map((assignment) => (

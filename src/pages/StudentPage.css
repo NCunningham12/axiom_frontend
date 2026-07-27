@@ -1,0 +1,90 @@
+.student-assignment-list-container {
+  background-color: rgb(1, 70, 1);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-assignment-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 90%;
+  justify-content: center;
+  align-items: center;
+}
+
+.student-assignment-list-title-section {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(253, 253, 253);
+  width: 100%;
+  height: 15%;
+  justify-content: center;
+  align-items: center;
+}
+
+.student-assignment-list-title {
+  display: flex;
+  background-color: rgb(49, 49, 49);
+  color: white;
+  border: 2px solid purple;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.student-assignment-list-body {
+  display: flex;
+  flex-direction: column;
+  background-color: gray;
+  width: 100%;
+  height: 90%;
+  justify-content: start;
+  align-items: center;
+}
+
+.student-assignment-row:nth-child(even) {
+  display: flex;
+  width: 100%;
+  background-color: white;
+}
+
+.student-assignment-row:nth-child(odd) {
+  display: flex;
+  width: 100%;
+  background-color: lightgray;
+}
+
+.student-assignment-header-row {
+  display: flex;
+  width: 100%;
+}
+
+.student-header-section {
+  display: flex;
+  flex-direction: row;
+  border: solid 2px black;
+  background-color: green;
+  color: white;
+  font-weight: bold;
+  font-size: large;
+  width: 100%;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+}
+
+.student-assignment-section {
+  display: flex;
+  flex-direction: row;
+  border: solid 1px black;
+  color: black;
+  width: 100%;
+  height: 100px;
+  justify-content: center;
+  align-items: center;
+}
