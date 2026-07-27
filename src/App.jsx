@@ -26,8 +26,14 @@ function App() {
               path="/teachers/assignment-list"
               element={<AssignmentList />}
             />
-            <Route path="/students/assignment" element={<Assignment />} />
-            <Route path="/students/skill-assignment" element={<SkillAssignment />} />
+            <Route
+              path="/students/assignment/:assignmentId"
+              element={<Assignment />}
+            />
+            <Route
+              path="/students/skill-assignment"
+              element={<SkillAssignment />}
+            />
             <Route path="/students/student-page" element={<StudentPage />} />
           </Routes>
         </div>

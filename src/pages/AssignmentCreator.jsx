@@ -93,6 +93,7 @@ const AssignmentCreator = () => {
 
     const savedAssignment = await createAssignment(assignmentData);
     console.log('Saved assignment from backend: ', savedAssignment);
+    navigate('/teachers/assignment-list');
   };
 
   const handleAssignmentTypeChange = (clickedType) => {

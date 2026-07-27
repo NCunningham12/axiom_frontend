@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './StudentPage.css';
 
 const StudentAssignmentList = () => {
@@ -59,7 +60,12 @@ const StudentAssignmentList = () => {
           {assignments.map((assignment) => (
             <div className="student-assignment-row" key={assignment.id}>
               <div className="student-assignment-links student-assignment-section">
-                {assignment.assignment_name}
+                <Link
+                  to={`/students/assignment/${assignment.id}`}
+                  className="student-assignment-title-link"
+                >
+                  {assignment.assignment_name}
+                </Link>
               </div>
 
               <div className="student-assignment-list student-assignment-section">

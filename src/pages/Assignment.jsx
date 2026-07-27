@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import skillMap from '../skills/skillMap.js';
 import './Assignment.css';
 import { InlineMath } from 'react-katex';
 
 export default function Assignment() {
-  const location = useLocation();
-  const assignment = location.state?.assignment;
+  const { assignmentId } = useParams();
 
+  const [assignment, setAssignment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [problems, setProblems] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
@@ -22,7 +24,32 @@ export default function Assignment() {
   const lastSubmittedStatus = useRef(null);
 
   useEffect(() => {
-    console.log('Assignment: ', assignment);
+    const fetchAssignment = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/assignments/${assignmentId}`,
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch assignment.');
+        }
+
+        const data = await response.json();
+
+        console.log('Fetched assignment:', data);
+        setAssignment(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignment();
+  }, [assignmentId]);
+
+  useEffect(() => {
+    console.log('Assignment:', assignment);
 
     if (!assignment?.problems) return;
 
@@ -40,7 +67,6 @@ export default function Assignment() {
       .filter(Boolean);
 
     setProblems(newProblems);
-
     setUserAnswers(Array(newProblems.length).fill(''));
   }, [assignment]);
 
