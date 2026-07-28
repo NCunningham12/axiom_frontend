@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import skillMap from '../skills/skillMap.js';
 import './SkillAssignment.css';
 import { InlineMath } from 'react-katex';
 
 export default function SkillAssignment() {
-  const location = useLocation();
-  const assignment = location.state?.assignment;
+  const { assignmentId } = useParams();
 
+  const [assignment, setAssignment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [problems, setProblems] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
@@ -23,20 +25,47 @@ export default function SkillAssignment() {
   const lastSubmittedIndex = useRef(null);
   const lastSubmittedStatus = useRef(null);
 
+  useEffect(() => {
+    const fetchAssignment = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/assignments/${assignmentId}`,
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch skill assignment.');
+        }
+
+        const data = await response.json();
+
+        console.log('Fetched skill assignment:', data);
+        setAssignment(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignment();
+  }, [assignmentId]);
+
   const generateSkillProblem = () => {
     const problemConfig = assignment?.problems?.[0];
     if (!problemConfig) return null;
-    
+
     const skill = skillMap[problemConfig.type];
 
     if (!skill || typeof skill.generateProblem !== 'function') {
-        console.warn(`No valid skill or generator found for type: ${problemConfig.type}`);
-        return null
+      console.warn(
+        `No valid skill or generator found for type: ${problemConfig.type}`,
+      );
+      return null;
     }
 
     return {
-        ...skill.generateProblem(problemConfig),
-        type: problemConfig.type,
+      ...skill.generateProblem(problemConfig),
+      type: problemConfig.type,
     };
   };
 
@@ -58,19 +87,18 @@ export default function SkillAssignment() {
   };
 
   const handleScoreUpdate = (correct) => {
-
     setCurrentScore((prevScore) => {
-        const nextScore = correct 
-            ? Math.min(100, prevScore + 10)
-            : Math.max(0, prevScore - 7);
+      const nextScore = correct
+        ? Math.min(100, prevScore + 10)
+        : Math.max(0, prevScore - 7);
 
-        if (nextScore >= 100) {
-            setCurrentScore(100);
-            setModalMessage('Mastery Reached!');
-            setShowModal(true);
-        }
+      if (nextScore >= 100) {
+        setCurrentScore(100);
+        setModalMessage('Mastery Reached!');
+        setShowModal(true);
+      }
 
-        return nextScore;
+      return nextScore;
     });
   };
 
@@ -88,7 +116,7 @@ export default function SkillAssignment() {
     const secs = seconds % 60;
 
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }
+  };
 
   const handleSubmit = () => {
     const input = userAnswers[currentProblemIndex];
@@ -103,9 +131,9 @@ export default function SkillAssignment() {
     const status = skill.validateAnswer(input, problem);
 
     if (status === 'correct') {
-        setCurrentStreak((prev) => prev + 1);
+      setCurrentStreak((prev) => prev + 1);
     } else {
-        setCurrentStreak(0);
+      setCurrentStreak(0);
     }
 
     // Update statusMap
@@ -132,22 +160,22 @@ export default function SkillAssignment() {
     setShowModal(true);
 
     setTimeout(() => {
-        const nextProblem = generateSkillProblem();
-        if (!nextProblem) return;
+      const nextProblem = generateSkillProblem();
+      if (!nextProblem) return;
 
-        setProblems((prev) => {
-            const nextIndex = prev.length;
+      setProblems((prev) => {
+        const nextIndex = prev.length;
 
-            setCurrentProblemIndex(nextIndex);
-            setUserAnswers((answers) => ({
-                ...answers,
-                [nextIndex]: '',
-            }));
+        setCurrentProblemIndex(nextIndex);
+        setUserAnswers((answers) => ({
+          ...answers,
+          [nextIndex]: '',
+        }));
 
-            return [...prev, nextProblem];
-        });
+        return [...prev, nextProblem];
+      });
 
-        setShowModal(false);
+      setShowModal(false);
     }, 1500);
 
     // Hide modal after 3 seconds
@@ -167,6 +195,18 @@ export default function SkillAssignment() {
     (statusMap[currentProblemIndex] || 'unanswered').charAt(0).toUpperCase() +
     (statusMap[currentProblemIndex] || 'unanswered').slice(1);
 
+  if (loading) {
+    return <div>Loading skill assignment...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!assignment) {
+    return <div>Skill assignment not found.</div>;
+  }
+
   return (
     <div className="assignment-wrapper">
       <div className="main-section">
@@ -182,14 +222,12 @@ export default function SkillAssignment() {
                   currentProblem,
                   handleInputChange,
                   currentProblemIndex,
-                  handleSubmit
+                  handleSubmit,
                 )}
               </div>
             )}
           </div>
-          <button className="submit-btn" onClick={
-            handleSubmit
-            }>
+          <button className="submit-btn" onClick={handleSubmit}>
             Submit
           </button>
         </div>
@@ -197,9 +235,7 @@ export default function SkillAssignment() {
         <div className="sidebar">
           <div className="question-number-div sidebar-div">
             <p className="side-header question-header">Score</p>
-            <p className="side-content">
-              {currentScore}
-            </p>
+            <p className="side-content">{currentScore}</p>
           </div>
           <div className="side-status-div sidebar-div">
             <p className="side-header">Score Target: </p>
@@ -207,9 +243,7 @@ export default function SkillAssignment() {
           </div>
           <div className="current-score-div sidebar-div">
             <p className="side-header">Streak: </p>
-            <p className="side-content">
-              {currentStreak}
-            </p>
+            <p className="side-content">{currentStreak}</p>
           </div>
           <div className="question-time-div sidebar-div">
             <p className="side-header">Time Spent:</p>

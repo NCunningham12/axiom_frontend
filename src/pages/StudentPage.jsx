@@ -61,7 +61,11 @@ const StudentAssignmentList = () => {
             <div className="student-assignment-row" key={assignment.id}>
               <div className="student-assignment-links student-assignment-section">
                 <Link
-                  to={`/students/assignment/${assignment.id}`}
+                  to={
+                    assignment.assignment_type === 'skill'
+                      ? `/students/skill-assignment/${assignment.id}`
+                      : `/students/assignment/${assignment.id}`
+                  }
                   className="student-assignment-title-link"
                 >
                   {assignment.assignment_name}
