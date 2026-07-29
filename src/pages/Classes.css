@@ -1,0 +1,41 @@
+.classes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: lightgrey;
+  width: 100%;
+  height: 100vh;
+}
+
+.classes-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: aqua;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+  background-color: rgb(39, 255, 154);
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  width: 90%;
+  background-color: blue;
+}
+
+.class-card {
+  display: flex;
+  width: 500px;
+  height: 300px;
+  background-color: red;
+  margin: 2rem;
+  border: 2px dashed hotpink;
+}
