@@ -9,6 +9,7 @@ import SkillAssignment from './pages/SkillAssignment';
 import AssignmentList from './pages/AssignmentList';
 import StudentPage from './pages/StudentPage';
 import Classes from './pages/Classes';
+import ClassRosters from './pages/ClassRosters';
 import './App.css';
 
 function App() {
@@ -28,6 +29,10 @@ function App() {
               element={<AssignmentList />}
             />
             <Route path="/teachers/classes" element={<Classes />} />
+            <Route
+              path="/teachers/classes/rosters"
+              element={<ClassRosters />}
+            />
             <Route
               path="/students/assignment/:assignmentId"
               element={<Assignment />}

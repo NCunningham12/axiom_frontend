@@ -6,17 +6,33 @@ const Classes = () => {
     <div className="classes-container">
       <h1 className="classes-title">Classes</h1>
       <div className="links">
-        - Link 1 <br />
-        - Link 2 <br />
-        - Link 3 <br />
+        - Add New Class    
       </div>
       <div className="cards">
-        <div className="class-card">Card 1</div>
-        <div className="class-card">Card 2</div>
-        <div className="class-card">Card 3</div>
-        <div className="class-card">Card 4</div>
-        <div className="class-card">Card 5</div>
-        <div className="class-card">Card 6</div>
+        <div className="class-card">
+          <h2 className="card-title">Advisory</h2>
+          <p className="card-description">32 Students</p>
+        </div>
+        <div className="class-card">
+          <h2 className="card-title">Period 1</h2>
+          <p className="card-description">32 Students</p>
+        </div>
+        <div className="class-card">
+          <h2 className="card-title">Period 2</h2>
+          <p className="card-description">32 Students</p>
+        </div>
+        <div className="class-card">
+          <h2 className="card-title">Period 3</h2>
+          <p className="card-description">32 Students</p>
+        </div>
+        <div className="class-card">
+          <h2 className="card-title">Period 4</h2>
+          <p className="card-description">32 Students</p>
+        </div>
+        <div className="class-card">
+          <h2 className="card-title">Period 5</h2>
+          <p className="card-description">32 Students</p>
+        </div>
       </div>
     </div>
   );
