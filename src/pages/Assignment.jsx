@@ -6,6 +6,7 @@ import { InlineMath } from 'react-katex';
 
 export default function Assignment() {
   const { assignmentId } = useParams();
+  const TEMP_STUDENT_ID = 2;
 
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,9 @@ export default function Assignment() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [timeSpent, setTimeSpent] = useState(0);
+  const [attempt, setAttempt] = useState(null);
+  const [attemptLoading, setAttemptLoading] = useState(true);
+  const [attemptError, setAttemptError] = useState('');
 
   const startTimeRef = useRef(Date.now());
 
@@ -90,7 +94,7 @@ export default function Assignment() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const input = userAnswers[currentProblemIndex];
     const problem = problems[currentProblemIndex];
     const skill = skillMap[problem.type];
@@ -100,18 +104,87 @@ export default function Assignment() {
       return;
     }
 
+    if (!attempt?.id) {
+      console.warn('No active assignment attempt found.');
+      return;
+    }
+
     const status = skill.validateAnswer(input, problem);
 
-    // Update statusMap
+    const updatedStatusMap = {
+      ...statusMap,
+      [currentProblemIndex]: status,
+    };
+
+    let nextProblemIndex = currentProblemIndex;
+
+    if (status === 'correct') {
+      const nextUnanswered = problems.findIndex(
+        (_, index) => !updatedStatusMap[index],
+      );
+
+      if (nextUnanswered !== -1) {
+        nextProblemIndex = nextUnanswered;
+      }
+    }
+
+    const scoreAwarded =
+      status === 'correct' ? 1 : status === 'partial' ? 0.5 : 0;
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/attempts/${attempt.id}/problems/${
+          currentProblemIndex + 1
+        }`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            studentAnswer: input,
+            status,
+            scoreAwarded,
+            currentProblemIndex: nextProblemIndex,
+            timeSpentSeconds: timeSpent,
+          }),
+        },
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || 'Failed to save problem progress.',
+        );
+      }
+
+      setAttempt((previousAttempt) => ({
+        ...previousAttempt,
+        current_problem_index: responseData.attempt.currentProblemIndex,
+        total_answered: responseData.attempt.totalAnswered,
+        total_correct: responseData.attempt.totalCorrect,
+        score: responseData.attempt.score,
+        time_spent_seconds: responseData.attempt.timeSpentSeconds,
+      }));
+    } catch (error) {
+      console.error('Failed to save problem progress:', error);
+
+      setModalMessage(`❌ Progress was not saved: ${error.message}`);
+      setShowModal(true);
+
+      setTimeout(() => {
+        setShowModal(false);
+      }, 3000);
+
+      return;
+    }
+
     lastSubmittedIndex.current = currentProblemIndex;
     lastSubmittedStatus.current = status;
 
-    setStatusMap((prev) => ({
-      ...prev,
-      [currentProblemIndex]: status,
-    }));
+    setStatusMap(updatedStatusMap);
 
-    // Capitalize status for modal message
     const emojiMessages = {
       correct: '✅ Correct! Good job.',
       incorrect: '❌ Incorrect! Try again.',
@@ -119,11 +192,10 @@ export default function Assignment() {
       unanswered: '🤔 Unanswered!',
     };
 
-    const message = emojiMessages[status] || `🤷 Unknown status: ${status}`;
-    setModalMessage(message);
+    setModalMessage(emojiMessages[status] || `🤷 Unknown status: ${status}`);
+
     setShowModal(true);
 
-    // Hide modal after 3 seconds
     setTimeout(() => {
       setShowModal(false);
     }, 3000);
@@ -142,6 +214,87 @@ export default function Assignment() {
       }
     }
   }, [statusMap]);
+
+  useEffect(() => {
+    const startAttempt = async () => {
+      try {
+        setAttemptLoading(true);
+        setAttemptError('');
+
+        console.log({
+          studentId: TEMP_STUDENT_ID,
+          assignmentId: Number(assignmentId),
+        });
+
+        const response = await fetch(
+          'http://localhost:5000/api/attempts/start',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              studentId: TEMP_STUDENT_ID,
+              assignmentId: Number(assignmentId),
+            }),
+          },
+        );
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            responseData.message || 'Failed to start assignment attempt.',
+          );
+        }
+
+        const loadedAttempt = responseData.attempt;
+        const savedResults = responseData.problemResults;
+
+        setAttempt(loadedAttempt);
+
+        setCurrentProblemIndex(loadedAttempt.current_problem_index || 0);
+
+        const restoredAnswers = {};
+        const restoredStatuses = {};
+
+        savedResults.forEach((result) => {
+          const index = Number(result.problem_number) - 1;
+
+          let savedAnswer = result.student_answer;
+
+          if (typeof savedAnswer === 'string') {
+            try {
+              savedAnswer = JSON.parse(savedAnswer);
+            } catch {
+              // Keep an ordinary string answer as-is.
+            }
+          }
+
+          restoredAnswers[index] = savedAnswer ?? '';
+          restoredStatuses[index] = result.status;
+        });
+
+        setUserAnswers(restoredAnswers);
+        setStatusMap(restoredStatuses);
+
+        const savedTime = Number(loadedAttempt.time_spent_seconds) || 0;
+
+        setTimeSpent(savedTime);
+        startTimeRef.current = Date.now() - savedTime * 1000;
+
+        console.log('Attempt:', loadedAttempt);
+        console.log('Saved results:', savedResults);
+      } catch (error) {
+        console.error('Failed to start attempt:', error);
+        setAttemptError(error.message);
+      } finally {
+        setAttemptLoading(false);
+      }
+    };
+
+    startAttempt();
+  }, [assignmentId]);
 
   const currentProblem = problems[currentProblemIndex];
 
