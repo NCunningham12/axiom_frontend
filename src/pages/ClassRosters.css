@@ -2,21 +2,56 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: lightgray;
+  background-color: rgb(134, 134, 134);
   height: 100vh;
+}
+
+.back-nav {
+  width: 100%;
+  margin-top: 50px;
+  margin-left: 250px;
+  font-size: 20px;
+  color: darkblue;
+}
+
+.back-link {
+  color: darkblue;
+}
+
+.rosters-page-title {
+  color: black;
+  margin: 30px;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  color: black;
+  gap: 0.2rem;
+}
+
+.rosters-links {
+  margin-top: 30px;
+  width: 100%;
+  margin-left: 250px;
+}
+
+.select-class {
+  display: flex;
+  height: 40px;
+  width: 180px;
+  border-radius: 8px;
 }
 
 .roster-wrapper {
   width: 90%;
-  padding: 50px;
+  padding: 10px;
 
-
-  --roster-columns:
-    minmax(50px, 0.2fr)
-    minmax(120px, 1fr)
-    minmax(120px, 1fr)
-    minmax(130px, 0.5fr)
-    minmax(260px, 3fr);
+  --roster-columns: minmax(50px, 0.2fr) minmax(120px, 1fr) minmax(120px, 1fr)
+    minmax(130px, 0.5fr) minmax(260px, 3fr);
 
   --edit-width: 80px;
 }
@@ -60,4 +95,151 @@
 .edit-btn {
   width: var(--edit-width);
   margin-left: 20px;
-} 
+  height: 40px;
+  margin-top: 5px;
+}
+
+/* Modal */
+
+.add-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  color: darkblue;
+  font-weight: bold;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 1.5rem;
+
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.student-modal {
+  width: min(500px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: white;
+}
+
+.student-modal-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.student-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.student-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.student-form-field input {
+  padding: 0.65rem;
+  font: inherit;
+}
+
+.class-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  padding: 1rem;
+}
+
+.class-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.student-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.modal-cancel-btn,
+.modal-add-btn {
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+}
+
+.modal-add-btn {
+  background-color: rgb(69, 161, 69);
+}
+
+.modal-cancel-btn {
+  background-color: lightgray;
+}
+
+.modal-add-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.modal-error {
+  margin: 0;
+  color: red;
+}
+
+.student-danger-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  margin-top: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #c9c9c9;
+}
+
+.student-danger-zone p {
+  margin: 0;
+  color: #8b0000;
+  font-size: 0.9rem;
+}
+
+.delete-student-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+
+  border: none;
+  border-radius: 6px;
+
+  background-color: #c62828;
+  color: white;
+  font: inherit;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.delete-student-btn:hover:not(:disabled) {
+  background-color: #961b1b;
+}
+
+.delete-student-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

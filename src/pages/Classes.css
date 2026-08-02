@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: lightgrey;
+  background-color: rgb(146, 146, 146);
   width: 100%;
   height: 100vh;
 }
@@ -12,23 +12,28 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: aqua;
+  margin-top: 30px;
+  color: black;
 }
 
 .links {
   display: flex;
   align-items: center;
-  padding-left: 10%;
+  padding-left: 15%;
   width: 100%;
   height: 100px;
-  background-color: rgb(39, 255, 154);
+  font-size: 20px;
+}
+
+.add-link {
+  color: darkblue;
 }
 
 .cards {
   display: flex;
   flex-wrap: wrap;
   width: 90%;
-  background-color: blue;
+  justify-content: center;
 }
 
 .class-card {
@@ -36,11 +41,17 @@
   flex-direction: column;
   color: white;
   padding: 40px;
-  width: 500px;
-  height: 300px;
-  background-color: red;
-  margin: 2rem;
-  border: 2px dashed hotpink;
+  width: 450px;
+  height: 250px;
+  background-color: green;
+  margin: 1rem;
+  border: 2px solid black;
+  border-radius: 8px;
+}
+
+.class-card:hover {
+  transform: translateY(-2px);
+  cursor: pointer;
 }
 
 .card-title {
@@ -49,4 +60,58 @@
 
 .card-description {
   font-size: larger;
+}
+
+/* Modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 1.5rem;
+
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.class-modal {
+  width: min(500px, 100%);
+  padding: 2rem;
+
+  border-radius: 12px;
+  background-color: white;
+}
+
+.class-modal-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.class-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.class-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.class-form-field input {
+  padding: 0.65rem;
+  font: inherit;
+}
+
+.class-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
