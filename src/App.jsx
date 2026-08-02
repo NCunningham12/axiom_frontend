@@ -30,7 +30,7 @@ function App() {
             />
             <Route path="/teachers/classes" element={<Classes />} />
             <Route
-              path="/teachers/classes/rosters"
+              path="/teachers/classes/rosters/:classId"
               element={<ClassRosters />}
             />
             <Route

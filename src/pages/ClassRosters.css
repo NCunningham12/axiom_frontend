@@ -1,0 +1,63 @@
+.rosters-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: lightgray;
+  height: 100vh;
+}
+
+.roster-wrapper {
+  width: 90%;
+  padding: 50px;
+
+
+  --roster-columns:
+    minmax(50px, 0.2fr)
+    minmax(120px, 1fr)
+    minmax(120px, 1fr)
+    minmax(130px, 0.5fr)
+    minmax(260px, 3fr);
+
+  --edit-width: 80px;
+}
+
+.roster-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--edit-width);
+  width: 100%;
+}
+
+.roster-categories,
+.roster-row {
+  display: grid;
+  grid-template-columns: var(--roster-columns);
+  min-width: 0;
+}
+
+.roster-categories {
+  background-color: green;
+  color: white;
+}
+
+.student-row:nth-child(even) .roster-item {
+  background-color: white;
+}
+
+.student-row:nth-child(odd) .roster-item {
+  background-color: lightgray;
+}
+
+.roster-item {
+  box-sizing: border-box;
+  border: 2px solid black;
+  padding: 0.75rem;
+}
+
+.edit-space {
+  width: var(--edit-width);
+}
+
+.edit-btn {
+  width: var(--edit-width);
+  margin-left: 20px;
+} 
