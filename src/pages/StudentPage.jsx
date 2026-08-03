@@ -6,11 +6,14 @@ const StudentAssignmentList = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [studentId, setStudentId] = useState(2);
 
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/assignments');
+        const response = await fetch(
+          `http://localhost:5000/api/assignments/student/${studentId}`,
+        );
 
         if (!response.ok) {
           throw new Error('Failed to fetch assignments.');
@@ -27,7 +30,7 @@ const StudentAssignmentList = () => {
     };
 
     fetchAssignments();
-  }, []);
+  }, [studentId]);
 
   console.log(assignments);
 
@@ -37,7 +40,14 @@ const StudentAssignmentList = () => {
         <div className="student-assignment-list-title-section">
           <h1 className="student-assignment-list-title">Assignments</h1>
         </div>
-
+        <div className="student-test-login">
+          Student ID:
+          <input
+            type="number"
+            value={studentId}
+            onChange={(e) => setStudentId(Number(e.target.value))}
+          />
+        </div>
         <div className="student-assignment-list-body">
           <div className="student-assignment-header-row">
             <div className="student-assignment-links student-header-section">
@@ -47,10 +57,10 @@ const StudentAssignmentList = () => {
               Assignment Type
             </div>
             <div className="student-assignment-periods student-header-section">
-              Periods
+              Status
             </div>
             <div className="student-assignment-periods student-header-section">
-              Folder
+              Progress
             </div>
             <div className="student-assignment-due student-header-section">
               Due Date
@@ -76,12 +86,12 @@ const StudentAssignmentList = () => {
                 {assignment.assignment_type}
               </div>
 
-              <div className="student-assignment-periods student-assignment-section">
-                {assignment.periods}
+              <div className="student-assignment-status student-assignment-section">
+                {assignment.display_status}
               </div>
 
-              <div className="student-assignment-periods student-assignment-section">
-                {assignment.folder}
+              <div className="student-assignment-completion student-assignment-section">
+                {assignment.completion_percentage}%
               </div>
 
               <div className="student-assignment-due student-assignment-section">

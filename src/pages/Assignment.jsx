@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import skillMap from '../skills/skillMap.js';
 import './Assignment.css';
 import { InlineMath } from 'react-katex';
 
 export default function Assignment() {
   const { assignmentId } = useParams();
-  const TEMP_STUDENT_ID = 2;
+  const [searchParams] = useSearchParams();
+  const studentId = Number(searchParams.get('studentId'));
 
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,7 @@ export default function Assignment() {
   const [attempt, setAttempt] = useState(null);
   const [attemptLoading, setAttemptLoading] = useState(true);
   const [attemptError, setAttemptError] = useState('');
+  const [savedResults, setSavedResults] = useState([]);
 
   const startTimeRef = useRef(Date.now());
 
@@ -71,7 +73,6 @@ export default function Assignment() {
       .filter(Boolean);
 
     setProblems(newProblems);
-    setUserAnswers(Array(newProblems.length).fill(''));
   }, [assignment]);
 
   const handleInputChange = (index, input) => {
@@ -217,12 +218,24 @@ export default function Assignment() {
 
   useEffect(() => {
     const startAttempt = async () => {
+      if (!studentId) {
+        setAttemptError('No student selected.');
+        setAttemptLoading(false);
+        return;
+      }
+      setAttempt(null);
+      setSavedResults([]);
+      setUserAnswers({});
+      setStatusMap({});
+      setCurrentProblemIndex(0);
+      setTimeSpent(0);
+      startTimeRef.current = Date.now();
       try {
         setAttemptLoading(true);
         setAttemptError('');
 
         console.log({
-          studentId: TEMP_STUDENT_ID,
+          studentId: studentId,
           assignmentId: Number(assignmentId),
         });
 
@@ -234,7 +247,7 @@ export default function Assignment() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              studentId: TEMP_STUDENT_ID,
+              studentId: studentId,
               assignmentId: Number(assignmentId),
             }),
           },
@@ -249,42 +262,13 @@ export default function Assignment() {
         }
 
         const loadedAttempt = responseData.attempt;
-        const savedResults = responseData.problemResults;
+        const loadedResults = responseData.problemResults;
 
         setAttempt(loadedAttempt);
-
-        setCurrentProblemIndex(loadedAttempt.current_problem_index || 0);
-
-        const restoredAnswers = {};
-        const restoredStatuses = {};
-
-        savedResults.forEach((result) => {
-          const index = Number(result.problem_number) - 1;
-
-          let savedAnswer = result.student_answer;
-
-          if (typeof savedAnswer === 'string') {
-            try {
-              savedAnswer = JSON.parse(savedAnswer);
-            } catch {
-              // Keep an ordinary string answer as-is.
-            }
-          }
-
-          restoredAnswers[index] = savedAnswer ?? '';
-          restoredStatuses[index] = result.status;
-        });
-
-        setUserAnswers(restoredAnswers);
-        setStatusMap(restoredStatuses);
-
-        const savedTime = Number(loadedAttempt.time_spent_seconds) || 0;
-
-        setTimeSpent(savedTime);
-        startTimeRef.current = Date.now() - savedTime * 1000;
+        setSavedResults(loadedResults);
 
         console.log('Attempt:', loadedAttempt);
-        console.log('Saved results:', savedResults);
+        console.log('Saved results:', loadedResults);
       } catch (error) {
         console.error('Failed to start attempt:', error);
         setAttemptError(error.message);
@@ -294,7 +278,56 @@ export default function Assignment() {
     };
 
     startAttempt();
-  }, [assignmentId]);
+  }, [assignmentId, studentId]);
+
+  useEffect(() => {
+    if (!attempt || problems.length === 0) {
+      return;
+    }
+
+    const restoredAnswers = {};
+    const restoredStatuses = {};
+
+    // Give every problem a blank answer first.
+    problems.forEach((_, index) => {
+      restoredAnswers[index] = '';
+    });
+
+    // Replace blanks with any saved database values.
+    savedResults.forEach((result) => {
+      const problemIndex = Number(result.problem_number) - 1;
+
+      let savedAnswer = result.student_answer;
+
+      if (typeof savedAnswer === 'string') {
+        try {
+          savedAnswer = JSON.parse(savedAnswer);
+        } catch {
+          // Keep an ordinary string as-is.
+        }
+      }
+
+      restoredAnswers[problemIndex] = savedAnswer ?? '';
+      restoredStatuses[problemIndex] = result.status;
+    });
+
+    setUserAnswers(restoredAnswers);
+    setStatusMap(restoredStatuses);
+
+    const restoredProblemIndex = Number(attempt.current_problem_index) || 0;
+
+    const safeProblemIndex =
+      restoredProblemIndex >= 0 && restoredProblemIndex < problems.length
+        ? restoredProblemIndex
+        : 0;
+
+    setCurrentProblemIndex(safeProblemIndex);
+
+    const savedTime = Number(attempt.time_spent_seconds) || 0;
+
+    setTimeSpent(savedTime);
+    startTimeRef.current = Date.now() - savedTime * 1000;
+  }, [attempt?.id, savedResults, problems]);
 
   const currentProblem = problems[currentProblemIndex];
 
