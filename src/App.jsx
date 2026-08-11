@@ -10,6 +10,7 @@ import AssignmentList from './pages/AssignmentList';
 import StudentPage from './pages/StudentPage';
 import Classes from './pages/Classes';
 import ClassRosters from './pages/ClassRosters';
+import Scores from './pages/Scores';
 import './App.css';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
               path="/teachers/assignment-list"
               element={<AssignmentList />}
             />
+            <Route path="/teachers/scores" element={<Scores />} />
             <Route path="/teachers/classes" element={<Classes />} />
             <Route
               path="/teachers/classes/rosters/:classId"

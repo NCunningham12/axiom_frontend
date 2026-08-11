@@ -42,12 +42,16 @@ const NavBar = () => {
           path: '/teachers/assignment-list',
         },
         {
-          label: 'Classes',
+          label: 'Scores',
+          path: '/teachers/scores',
+        },
+        {
+          label: 'Class Rosters',
           path: '/teachers/classes',
         },
         {
           label: 'Random Student Caller',
-          children: '/teacher/rsc',
+          path: '/teacher/rsc',
         },
       ],
     },
@@ -81,14 +85,18 @@ const NavBar = () => {
                   {openCategory === item.label && (
                     <div className="submenu">
                       {item.children.map((child) => (
-                        <a className='submenu-item' key={child.label} href={child.path}>
+                        <a
+                          className="submenu-item"
+                          key={child.label}
+                          href={child.path}
+                        >
                           {child.label}
                         </a>
                       ))}
                     </div>
                   )}
-              </>
-            ) : (
+                </>
+              ) : (
                 <a href={item.path} className="nav-item">
                   {item.label}
                 </a>

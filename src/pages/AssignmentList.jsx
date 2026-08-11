@@ -57,7 +57,7 @@ const AssignmentList = () => {
               Assignment Type
             </div>
             <div className="assignment-periods header-section">Periods</div>
-            <div className="assignment-periods header-section">Folder</div>
+            <div className="assignment-folder header-section">Folder</div>
             <div className="assignment-due header-section">Due Date</div>
           </div>
 
