@@ -218,6 +218,11 @@ export default function Assignment() {
 
   useEffect(() => {
     const startAttempt = async () => {
+      console.log('START ATTEMPT VALUES: ', {
+        studentId,
+        assignmentId,
+      });
+
       if (!studentId) {
         setAttemptError('No student selected.');
         setAttemptLoading(false);

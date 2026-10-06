@@ -50,9 +50,7 @@ const AssignmentList = () => {
 
         <div className="assignment-list-body">
           <div className="assignment-header-row">
-            <div className="assignment-links header-section">
-              Assignment
-            </div>
+            <div className="assignment-links header-section">Assignment</div>
             <div className="assignment-list header-section">
               Assignment Type
             </div>
