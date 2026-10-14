@@ -38,6 +38,47 @@
   margin-bottom: 1.5rem;
 }
 
+/* Filters container */
+.scores-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+}
+
+/* Individual filter groups */
+.scores-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+/* Filter labels */
+.scores-filter-group label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Dropdowns */
+.scores-filter-group select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* Dropdown focus */
+.scores-filter-group select:focus {
+  outline: 2px solid #28a745;
+  outline-offset: 1px;
+}
+
 /* =========================
    TABLE
 ========================= */
