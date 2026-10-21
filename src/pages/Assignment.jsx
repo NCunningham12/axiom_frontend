@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useStudent } from '../context/StudentContext';
 import skillMap from '../skills/skillMap.js';
 import './Assignment.css';
 import { InlineMath } from 'react-katex';
 
 export default function Assignment() {
   const { assignmentId } = useParams();
-  const [searchParams] = useSearchParams();
-  const studentId = Number(searchParams.get('studentId'));
+  const { currentStudent } = useStudent();
+  const studentId = currentStudent?.id;
 
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -223,11 +224,6 @@ export default function Assignment() {
         assignmentId,
       });
 
-      if (!studentId) {
-        setAttemptError('No student selected.');
-        setAttemptLoading(false);
-        return;
-      }
       setAttempt(null);
       setSavedResults([]);
       setUserAnswers({});
@@ -235,6 +231,15 @@ export default function Assignment() {
       setCurrentProblemIndex(0);
       setTimeSpent(0);
       startTimeRef.current = Date.now();
+
+      lastSubmittedIndex.current = null;
+      lastSubmittedStatus.current = null;
+
+      if (!studentId) {
+        setAttemptError('No student selected.');
+        setAttemptLoading(false);
+        return;
+      }
       try {
         setAttemptLoading(true);
         setAttemptError('');
@@ -342,6 +347,22 @@ export default function Assignment() {
   const displayStatus =
     (statusMap[currentProblemIndex] || 'unanswered').charAt(0).toUpperCase() +
     (statusMap[currentProblemIndex] || 'unanswered').slice(1);
+
+  if (!studentId) {
+    return <p>Please select a test student to open this assignment.</p>;
+  }
+
+  if (loading || attemptLoading) {
+    return <p>Loading assignment...</p>;
+  }
+
+  if (error || attemptError) {
+    return <p>{error || attemptError}</p>;
+  }
+
+  if (!assignment || !attempt) {
+    return <p>Unable to load assignment.</p>;
+  }
 
   return (
     <div className="assignment-wrapper">

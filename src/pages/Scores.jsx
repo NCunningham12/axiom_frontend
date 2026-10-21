@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import './Scores.css';
 
 const Scores = () => {
+  const [searchParams] = useSearchParams();
+  const assignmentIdFromUrl = searchParams.get('assignmentId');
+
   const [scores, setScores] = useState([]);
-  const [selectedAssignment, setSelectedAssignment] = useState('all');
+  const [selectedAssignment, setSelectedAssignment] = useState(
+    assignmentIdFromUrl || 'all',
+  );
   const [assignments, setAssignments] = useState([]);
-  const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [selectedPeriod, setSelectedPeriod] = useState('period1');
 
   useEffect(() => {
     const fetchScores = async () => {
@@ -64,13 +70,12 @@ const Scores = () => {
 
       <div className="scores-filters">
         <div className="scores-filter-group">
+          <label htmlFor="assignment-filter">Assignment</label>
           <select
             id="assignment-filter"
             value={selectedAssignment}
             onChange={(e) => setSelectedAssignment(e.target.value)}
           >
-            <option value="all">All Assignments</option>
-
             {assignments.map((assignment) => (
               <option key={assignment.id} value={assignment.id}>
                 {assignment.assignment_name}
@@ -86,7 +91,6 @@ const Scores = () => {
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
           >
-            <option value="all">All Periods</option>
             {[1, 2, 3, 4, 5, 6].map((period) => (
               <option key={period} value={`Period ${period}`}>
                 Period {period}
@@ -102,18 +106,6 @@ const Scores = () => {
             <option value="completed">Completed</option>
             <option value="in-progress">In Progress</option>
             <option value="not-started">Not Started</option>
-          </select>
-        </div>
-
-        <div className="scores-filter-group">
-          <label htmlFor="sort-filter">Sort By</label>
-          <select id="sort-filter" defaultValue="last-name">
-            <option value="last-name">Last Name</option>
-            <option value="first-name">First Name</option>
-            <option value="score-high">Score: High to Low</option>
-            <option value="score-low">Score: Low to High</option>
-            <option value="completion">Completion</option>
-            <option value="time">Time Spent</option>
           </select>
         </div>
       </div>

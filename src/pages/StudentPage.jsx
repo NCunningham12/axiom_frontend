@@ -1,15 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useStudent } from '../context/StudentContext';
 import './StudentPage.css';
 
 const StudentAssignmentList = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [studentId, setStudentId] = useState(2);
+
+  const { currentStudent } = useStudent();
+  const studentId = currentStudent?.id;
 
   useEffect(() => {
+    if (!studentId) {
+      setAssignments([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    let cancelled = false;
+
     const fetchAssignments = async () => {
+      setLoading(true);
+      setError(null);
+      setAssignments([]);
+
       try {
         const response = await fetch(
           `http://localhost:5000/api/assignments/student/${studentId}`,
@@ -21,15 +37,25 @@ const StudentAssignmentList = () => {
 
         const data = await response.json();
 
-        setAssignments(data);
+        if (!cancelled) {
+          setAssignments(data);
+        }
       } catch (err) {
-        setError(err.message);
+        if (!cancelled) {
+          setError(err.message);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     fetchAssignments();
+
+    return () => {
+      cancelled = true;
+    };
   }, [studentId]);
 
   console.log(assignments);
@@ -39,14 +65,6 @@ const StudentAssignmentList = () => {
       <div className="student-assignment-list-wrapper">
         <div className="student-assignment-list-title-section">
           <h1 className="student-assignment-list-title">Assignments</h1>
-        </div>
-        <div className="student-test-login">
-          Student ID:
-          <input
-            type="number"
-            value={studentId}
-            onChange={(e) => setStudentId(Number(e.target.value))}
-          />
         </div>
         <div className="student-assignment-list-body">
           <div className="student-assignment-header-row">
@@ -66,39 +84,50 @@ const StudentAssignmentList = () => {
               Due Date
             </div>
           </div>
+          {!studentId && <p>Select a test student to view assignments.</p>}
 
-          {assignments.map((assignment) => (
-            <div className="student-assignment-row" key={assignment.id}>
-              <div className="student-assignment-links student-assignment-section">
-                <Link
-                  to={
-                    assignment.assignment_type === 'skill'
-                      ? `/students/skill-assignment/${assignment.id}`
-                      : `/students/assignment/${assignment.id}`
-                  }
-                  className="student-assignment-title-link"
-                >
-                  {assignment.assignment_name}
-                </Link>
-              </div>
+          {studentId && loading && <p>Loading assignments...</p>}
 
-              <div className="student-assignment-list student-assignment-section">
-                {assignment.assignment_type}
-              </div>
+          {studentId && error && <p>{error}</p>}
 
-              <div className="student-assignment-status student-assignment-section">
-                {assignment.display_status}
-              </div>
+          {studentId && !loading && !error && assignments.length === 0 && (
+            <p>No assignments found for this student.</p>
+          )}
+          {studentId &&
+            !loading &&
+            !error &&
+            assignments.map((assignment) => (
+              <div className="student-assignment-row" key={assignment.id}>
+                <div className="student-assignment-links student-assignment-section">
+                  <Link
+                    to={
+                      assignment.assignment_type === 'skill'
+                        ? `/students/skill-assignment/${assignment.id}`
+                        : `/students/assignment/${assignment.id}`
+                    }
+                    className="student-assignment-title-link"
+                  >
+                    {assignment.assignment_name}
+                  </Link>
+                </div>
 
-              <div className="student-assignment-completion student-assignment-section">
-                {assignment.completion_percentage}%
-              </div>
+                <div className="student-assignment-list student-assignment-section">
+                  {assignment.assignment_type}
+                </div>
 
-              <div className="student-assignment-due student-assignment-section">
-                {assignment.due_date}
+                <div className="student-assignment-status student-assignment-section">
+                  {assignment.display_status}
+                </div>
+
+                <div className="student-assignment-completion student-assignment-section">
+                  {assignment.completion_percentage}%
+                </div>
+
+                <div className="student-assignment-due student-assignment-section">
+                  {assignment.due_date}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './AssignmentList.css';
 
 const AssignmentList = () => {
@@ -62,7 +63,12 @@ const AssignmentList = () => {
           {assignments.map((assignment) => (
             <div className="assignment-row" key={assignment.id}>
               <div className="assignment-links assignment-section">
-                {assignment.assignment_name}
+                <Link
+                  to={`/teachers/scores?assignmentId=${assignment.id}`}
+                  className="teacher-assignment-title-link"
+                >
+                  {assignment.assignment_name}
+                </Link>
               </div>
 
               <div className="assignment-list assignment-section">

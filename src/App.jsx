@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { StudentProvider } from './context/StudentContext';
+import StudentSwitcher from './components/StudentSwitcher';
 import Home from './pages/Home';
 import NavBar from './sections/NavBar';
 import Footer from './sections/Footer';
@@ -15,8 +17,9 @@ import './App.css';
 
 function App() {
   return (
-    <>
+    <StudentProvider>
       <Router>
+        <StudentSwitcher />
         <NavBar />
         <div className="main-wrapper">
           <Routes>
@@ -48,7 +51,7 @@ function App() {
         </div>
         <Footer />
       </Router>
-    </>
+    </StudentProvider>
   );
 }
 
