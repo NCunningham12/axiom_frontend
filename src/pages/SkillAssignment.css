@@ -1,4 +1,4 @@
-.assignment-wrapper {
+.skill-assignment-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,7 +9,7 @@
 
 /* Main Section */
 
-.main-section {
+.skill-main-section {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -22,7 +22,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.question-title {
+.skill-question-title {
   display: flex;
   margin: auto;
   position: absolute;
@@ -30,7 +30,7 @@
   margin: 20px;
 }
 
-.problem-wrapper {
+.skill-problem-wrapper {
   display: flex;
   flex-direction: column;
   margin-left: 7rem;
@@ -39,20 +39,20 @@
   justify-content: space-between;
 }
 
-.assignment-title {
+.skill-assignment-title {
   display: flex;
   align-self: center;
   font-weight: 900;
   color: #000000;
 }
 
-.problem {
+.skill-problem {
   display: flex;
   justify-self: center;
   justify-content: center;
 }
 
-.problem-display {
+.skill-problem-display {
   display: flex;
   flex-direction: row;
   padding: 1rem;
@@ -62,7 +62,7 @@
   justify-content: center;
 }
 
-.problem-section-render {
+.skill-problem-section-render {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -71,7 +71,7 @@
   height: 100%;
 }
 
-.problem-directions {
+.skill-problem-directions {
   font-style: italic;
   margin-bottom: 5rem;
   margin-top: 5rem;
@@ -228,7 +228,7 @@
 
 /* Sidebar */
 
-.sidebar {
+.skill-sidebar {
   background-color: #ffffff;
   width: 16%;
   height: 70%;

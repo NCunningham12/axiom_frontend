@@ -1,4 +1,364 @@
+
+/* =========================================
+   STUDENT PAGE - MAIN LAYOUT
+========================================= */
+
 .student-assignment-list-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: rgb(185, 185, 185);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 55px 40px;
+  box-sizing: border-box;
+}
+
+.student-assignment-list-wrapper {
+  width: 100%;
+  max-width: 1350px;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.student-assignment-list-title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5px;
+}
+
+.student-assignment-list-title-section h1 {
+  margin: 0;
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.student-assignment-count {
+  background-color: #fff3d6;
+  color: #936100;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================================
+   TO DO / COMPLETED TABS
+========================================= */
+
+.student-assignment-tabs {
+  display: flex;
+  gap: 10px;
+  background-color: #e8ece8;
+  padding: 6px;
+  border-radius: 12px;
+}
+
+.student-assignment-tabs button {
+  flex: 1;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 9px;
+  background-color: transparent;
+  color: #555;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.student-assignment-tabs button:hover {
+  background-color: #d8e0d8;
+}
+
+.student-assignment-tabs button.active {
+  background-color: white;
+  color: #185a2a;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================================
+   TWO-COLUMN LAYOUT
+========================================= */
+
+.student-assignment-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.student-assignment-column {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  min-width: 0;
+}
+
+.student-column-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.student-column-heading h2 {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.student-column-heading span {
+  margin-left: auto;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 15px;
+  padding: 3px 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.past-due-heading h2 {
+  color: #ffe2b2;
+}
+
+/* =========================================
+   ASSIGNMENT CARD LIST
+========================================= */
+
+.student-assignment-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+/* =========================================
+   INDIVIDUAL ASSIGNMENT CARDS
+========================================= */
+
+.student-assignment-card {
+  background-color: #ffffff;
+  border: 1px solid #dfe5df;
+  border-radius: 13px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.student-assignment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.16);
+}
+
+.student-assignment-card.past-due {
+  border-color: #e2a14a;
+}
+
+/* =========================================
+   CARD HEADER
+========================================= */
+
+.student-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.student-card-heading {
+  min-width: 0;
+}
+
+.student-card-heading h3 {
+  margin: 0 0 9px;
+  color: #263329;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.student-card-heading p {
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+}
+
+.student-card-separator {
+  margin: 0 8px;
+}
+
+/* =========================================
+   STATUS BADGES
+========================================= */
+
+.student-card-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.student-card-badge.not-started {
+  background-color: #edf0f2;
+  color: #59636d;
+}
+
+.student-card-badge.in-progress,
+.student-card-badge.ready {
+  background-color: #fff0ce;
+  color: #996600;
+}
+
+.student-card-badge.past-due {
+  background-color: #ffe4df;
+  color: #b43725;
+}
+
+.student-card-badge.submitted {
+  background-color: #dff4e5;
+  color: #24733d;
+}
+
+/* =========================================
+   PROGRESS LABEL AND BAR
+========================================= */
+
+.student-card-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #777;
+  font-size: 13px;
+}
+
+.student-card-progress-label strong {
+  color: #303a32;
+  font-size: 14px;
+}
+
+.student-card-progress-track {
+  width: 100%;
+  height: 9px;
+  background-color: #e8ece8;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: -12px;
+}
+
+.student-card-progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  background-color: #e3a622;
+  transition: width 0.3s ease;
+}
+
+.student-card-progress-fill.not-started {
+  background-color: #aab4bd;
+}
+
+.student-card-progress-fill.past-due {
+  background-color: #d97706;
+}
+
+.student-card-progress-fill.submitted {
+  background-color: #28a052;
+}
+
+/* =========================================
+   CARD FOOTER AND BUTTON
+========================================= */
+
+.student-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.student-card-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 17px;
+  background-color: #185a2a;
+  color: white;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.student-card-button:hover {
+  background-color: #10421e;
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   COMPLETED ASSIGNMENTS
+========================================= */
+
+.student-completed-assignments {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: calc((100% - 24px) / 2);
+  margin: 0 auto;
+}
+
+/* =========================================
+   EMPTY STATES AND MESSAGES
+========================================= */
+
+.student-column-empty {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  color: #53715b;
+  font-size: 15px;
+  margin: 0;
+}
+
+.student-page-message {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  color: #444;
+  text-align: center;
+}
+
+.assignment-empty {
+  margin: 24px 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  text-align: center;
+}
+
+
+/* OLD BUILD BELOW */
+
+/* .student-assignment-list-container {
   background-color: rgb(1, 70, 1);
   width: 100%;
   height: 100vh;
@@ -87,4 +447,4 @@
   height: 100px;
   justify-content: center;
   align-items: center;
-}
+} */

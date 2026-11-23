@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { useStudent } from '../context/StudentContext';
-import skillMap from '../skills/skillMap.js';
-import './Assignment.css';
-import { InlineMath } from 'react-katex';
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useStudent } from "../context/StudentContext";
+import skillMap from "../skills/skillMap.js";
+import "./Assignment.css";
+import { InlineMath } from "react-katex";
 
 export default function Assignment() {
   const { assignmentId } = useParams();
   const { currentStudent } = useStudent();
   const studentId = currentStudent?.id;
+  const navigate = useNavigate();
 
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,12 +19,15 @@ export default function Assignment() {
   const [userAnswers, setUserAnswers] = useState({});
   const [statusMap, setStatusMap] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState("");
   const [timeSpent, setTimeSpent] = useState(0);
   const [attempt, setAttempt] = useState(null);
   const [attemptLoading, setAttemptLoading] = useState(true);
-  const [attemptError, setAttemptError] = useState('');
+  const [attemptError, setAttemptError] = useState("");
   const [savedResults, setSavedResults] = useState([]);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [submittingAssignment, setSubmittingAssignment] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const startTimeRef = useRef(Date.now());
 
@@ -38,12 +42,12 @@ export default function Assignment() {
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch assignment.');
+          throw new Error("Failed to fetch assignment.");
         }
 
         const data = await response.json();
 
-        console.log('Fetched assignment:', data);
+        console.log("Fetched assignment:", data);
         setAssignment(data);
       } catch (err) {
         setError(err.message);
@@ -56,7 +60,7 @@ export default function Assignment() {
   }, [assignmentId]);
 
   useEffect(() => {
-    console.log('Assignment:', assignment);
+    console.log("Assignment:", assignment);
 
     if (!assignment?.problems) return;
 
@@ -93,7 +97,7 @@ export default function Assignment() {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
 
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const handleSubmit = async () => {
@@ -107,7 +111,7 @@ export default function Assignment() {
     }
 
     if (!attempt?.id) {
-      console.warn('No active assignment attempt found.');
+      console.warn("No active assignment attempt found.");
       return;
     }
 
@@ -120,7 +124,7 @@ export default function Assignment() {
 
     let nextProblemIndex = currentProblemIndex;
 
-    if (status === 'correct') {
+    if (status === "correct") {
       const nextUnanswered = problems.findIndex(
         (_, index) => !updatedStatusMap[index],
       );
@@ -131,7 +135,7 @@ export default function Assignment() {
     }
 
     const scoreAwarded =
-      status === 'correct' ? 1 : status === 'partial' ? 0.5 : 0;
+      status === "correct" ? 1 : status === "partial" ? 0.5 : 0;
 
     try {
       const response = await fetch(
@@ -139,9 +143,9 @@ export default function Assignment() {
           currentProblemIndex + 1
         }`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             studentAnswer: input,
@@ -157,7 +161,7 @@ export default function Assignment() {
 
       if (!response.ok) {
         throw new Error(
-          responseData.message || 'Failed to save problem progress.',
+          responseData.message || "Failed to save problem progress.",
         );
       }
 
@@ -170,7 +174,7 @@ export default function Assignment() {
         time_spent_seconds: responseData.attempt.timeSpentSeconds,
       }));
     } catch (error) {
-      console.error('Failed to save problem progress:', error);
+      console.error("Failed to save problem progress:", error);
 
       setModalMessage(`❌ Progress was not saved: ${error.message}`);
       setShowModal(true);
@@ -188,10 +192,10 @@ export default function Assignment() {
     setStatusMap(updatedStatusMap);
 
     const emojiMessages = {
-      correct: '✅ Correct! Good job.',
-      incorrect: '❌ Incorrect! Try again.',
-      partial: '⚠️ Partially Correct!',
-      unanswered: '🤔 Unanswered!',
+      correct: "✅ Correct! Good job.",
+      incorrect: "❌ Incorrect! Try again.",
+      partial: "⚠️ Partially Correct!",
+      unanswered: "🤔 Unanswered!",
     };
 
     setModalMessage(emojiMessages[status] || `🤷 Unknown status: ${status}`);
@@ -204,7 +208,7 @@ export default function Assignment() {
   };
 
   useEffect(() => {
-    if (lastSubmittedStatus.current === 'correct') {
+    if (lastSubmittedStatus.current === "correct") {
       const nextUnanswered = problems.findIndex((_, i) => !statusMap[i]);
       if (
         nextUnanswered !== -1 &&
@@ -219,7 +223,7 @@ export default function Assignment() {
 
   useEffect(() => {
     const startAttempt = async () => {
-      console.log('START ATTEMPT VALUES: ', {
+      console.log("START ATTEMPT VALUES: ", {
         studentId,
         assignmentId,
       });
@@ -236,13 +240,13 @@ export default function Assignment() {
       lastSubmittedStatus.current = null;
 
       if (!studentId) {
-        setAttemptError('No student selected.');
+        setAttemptError("No student selected.");
         setAttemptLoading(false);
         return;
       }
       try {
         setAttemptLoading(true);
-        setAttemptError('');
+        setAttemptError("");
 
         console.log({
           studentId: studentId,
@@ -250,11 +254,11 @@ export default function Assignment() {
         });
 
         const response = await fetch(
-          'http://localhost:5000/api/attempts/start',
+          "http://localhost:5000/api/attempts/start",
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               studentId: studentId,
@@ -267,7 +271,7 @@ export default function Assignment() {
 
         if (!response.ok) {
           throw new Error(
-            responseData.message || 'Failed to start assignment attempt.',
+            responseData.message || "Failed to start assignment attempt.",
           );
         }
 
@@ -277,10 +281,10 @@ export default function Assignment() {
         setAttempt(loadedAttempt);
         setSavedResults(loadedResults);
 
-        console.log('Attempt:', loadedAttempt);
-        console.log('Saved results:', loadedResults);
+        console.log("Attempt:", loadedAttempt);
+        console.log("Saved results:", loadedResults);
       } catch (error) {
-        console.error('Failed to start attempt:', error);
+        console.error("Failed to start attempt:", error);
         setAttemptError(error.message);
       } finally {
         setAttemptLoading(false);
@@ -300,7 +304,7 @@ export default function Assignment() {
 
     // Give every problem a blank answer first.
     problems.forEach((_, index) => {
-      restoredAnswers[index] = '';
+      restoredAnswers[index] = "";
     });
 
     // Replace blanks with any saved database values.
@@ -309,7 +313,7 @@ export default function Assignment() {
 
       let savedAnswer = result.student_answer;
 
-      if (typeof savedAnswer === 'string') {
+      if (typeof savedAnswer === "string") {
         try {
           savedAnswer = JSON.parse(savedAnswer);
         } catch {
@@ -317,7 +321,7 @@ export default function Assignment() {
         }
       }
 
-      restoredAnswers[problemIndex] = savedAnswer ?? '';
+      restoredAnswers[problemIndex] = savedAnswer ?? "";
       restoredStatuses[problemIndex] = result.status;
     });
 
@@ -341,12 +345,12 @@ export default function Assignment() {
 
   const currentProblem = problems[currentProblemIndex];
 
-  const currentStatus = statusMap[currentProblemIndex] || 'unanswered';
+  const currentStatus = statusMap[currentProblemIndex] || "unanswered";
   const sidebarStatusClass = `side-content status-${currentStatus}`;
 
   const displayStatus =
-    (statusMap[currentProblemIndex] || 'unanswered').charAt(0).toUpperCase() +
-    (statusMap[currentProblemIndex] || 'unanswered').slice(1);
+    (statusMap[currentProblemIndex] || "unanswered").charAt(0).toUpperCase() +
+    (statusMap[currentProblemIndex] || "unanswered").slice(1);
 
   if (!studentId) {
     return <p>Please select a test student to open this assignment.</p>;
@@ -364,6 +368,49 @@ export default function Assignment() {
     return <p>Unable to load assignment.</p>;
   }
 
+  const completionPercentage = problems.length
+    ? Math.round(
+        (Object.values(statusMap).filter(
+          (status) => status === "correct" || status === "incorrect",
+        ).length /
+          problems.length) *
+          100,
+      )
+    : 0;
+
+  const submitAssignment = async () => {
+    if (!attempt?.id || submittingAssignment) return;
+
+    try {
+      setSubmittingAssignment(true);
+      setSubmitError("");
+
+      const response = await fetch(
+        `http://localhost:5000/api/attempts/${attempt.id}/submit`,
+        {
+          method: "PUT",
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit assignment.");
+      }
+
+      navigate("/students/student-page", {
+        state: {
+          submissionSuccess: true,
+        },
+      });
+    } catch (error) {
+      console.error("Assignment submission failed:", error);
+      setSubmitError(error.message);
+    } finally {
+      setSubmittingAssignment(false);
+    }
+  };
+
   return (
     <div className="assignment-wrapper">
       <div className="top-section">
@@ -372,12 +419,12 @@ export default function Assignment() {
             const status = statusMap[index];
             const isActive = index === currentProblemIndex;
 
-            let className = 'problem-tab';
-            if (status === 'correct') className += ' correct';
-            else if (status === 'partial') className += ' partial';
-            else if (status === 'incorrect') className += ' incorrect';
+            let className = "problem-tab";
+            if (status === "correct") className += " correct";
+            else if (status === "partial") className += " partial";
+            else if (status === "incorrect") className += " incorrect";
 
-            if (isActive) className += ' active';
+            if (isActive) className += " active";
 
             return (
               <button
@@ -393,65 +440,117 @@ export default function Assignment() {
       </div>
 
       <div className="main-section">
-        <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
-        <div className="problem-wrapper">
-          <h2 className="assignment-title">
-            {assignment?.metadata?.assignmentName}
-          </h2>
-          <div className="problem-display">
-            {currentProblem && (
-              <div className="problem" key={currentProblemIndex}>
-                {skillMap[currentProblem.type]?.renderProblem(
-                  userAnswers[currentProblemIndex] || '',
-                  currentProblem,
-                  handleInputChange,
-                  currentProblemIndex,
-                  handleSubmit,
-                )}
-              </div>
-            )}
-            {statusMap[currentProblemIndex] && (
-              <div className="answer-badge">
-                Your Answer:
-                <InlineMath math={userAnswers[currentProblemIndex]} />
-              </div>
-            )}
-          </div>
-          <button className="submit-btn" onClick={handleSubmit}>
-            Submit
+        <div className="question-wrap">
+          <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
+          <button
+            className="submit-assignment"
+            onClick={() => setShowSubmitModal(true)}
+          >
+            Submit Assignment
           </button>
         </div>
 
-        <div className="sidebar">
-          <div className="question-number-div sidebar-div">
-            <p className="side-header question-header">Question</p>
-            <p className="side-content">
-              {currentProblemIndex + 1} / {problems.length}
-            </p>
+        <div className="problem-container">
+          <div className="problem-wrapper">
+            <h2
+              className="as
+            signment-title"
+            >
+              {assignment?.metadata?.assignmentName}
+            </h2>
+            <div className="problem-display">
+              {currentProblem && (
+                <div className="problem" key={currentProblemIndex}>
+                  {skillMap[currentProblem.type]?.renderProblem(
+                    userAnswers[currentProblemIndex] || "",
+                    currentProblem,
+                    handleInputChange,
+                    currentProblemIndex,
+                    handleSubmit,
+                  )}
+                </div>
+              )}
+              {statusMap[currentProblemIndex] && (
+                <div className="answer-badge">
+                  Your Answer:
+                  <InlineMath math={userAnswers[currentProblemIndex]} />
+                </div>
+              )}
+            </div>
+            <button className="submit-btn" onClick={handleSubmit}>
+              Submit
+            </button>
           </div>
-          <div className="side-status-div sidebar-div">
-            <p className="side-header">Status: </p>
-            <p className={sidebarStatusClass}>{displayStatus}</p>
-          </div>
-          <div className="current-score-div sidebar-div">
-            <p className="side-header">Score: </p>
-            <p className="side-content">
-              {(
-                (Object.values(statusMap).filter((s) => s === 'correct')
-                  .length /
-                  problems.length) *
-                100
-              ).toFixed(2)}
-              {'%'}
-            </p>
-          </div>
-          <div className="question-time-div sidebar-div">
-            <p className="side-header">Time Spent:</p>
-            <div className="side-content">{formatTime(timeSpent)}</div>
+          <div className="sidebar">
+            <div className="question-number-div sidebar-div">
+              <p className="side-header question-header">Question</p>
+              <p className="side-content">
+                {currentProblemIndex + 1} / {problems.length}
+              </p>
+            </div>
+            <div className="side-status-div sidebar-div">
+              <p className="side-header">Status: </p>
+              <p className={sidebarStatusClass}>{displayStatus}</p>
+            </div>
+            <div className="current-score-div sidebar-div">
+              <p className="side-header">Score: </p>
+              <p className="side-content">
+                {(
+                  (Object.values(statusMap).filter((s) => s === "correct")
+                    .length /
+                    problems.length) *
+                  100
+                ).toFixed(2)}
+                {"%"}
+              </p>
+            </div>
+            <div className="question-time-div sidebar-div">
+              <p className="side-header">Time Spent:</p>
+              <div className="side-content">{formatTime(timeSpent)}</div>
+            </div>
           </div>
         </div>
       </div>
       {showModal && <div className="fade-modal">{modalMessage}</div>}
+      {showSubmitModal && (
+        <div className="submit-modal-overlay">
+          <div className="submit-modal">
+            <h2>Submit Assignment?</h2>
+
+            <p>You've completed {completionPercentage}% of this assignment.</p>
+
+            <p>
+              Your progress will be saved, and you can review your assignment
+              after submitting.
+            </p>
+
+            {attempt.total_answered < problems.length && (
+              <p className="submit-warning">
+                You still have unanswered questions. Are you sure you want to
+                submit?
+              </p>
+            )}
+
+            {submitError && <p className="submit-error">{submitError}</p>}
+
+            <div className="submit-modal-actions">
+              <button
+                disabled={submittingAssignment}
+                onClick={() => setShowSubmitModal(false)}
+              >
+                Keep Working
+              </button>
+
+              <button
+                disabled={submittingAssignment}
+                onClick={submitAssignment}
+              >
+                {submittingAssignment ? "Submitting..." : "Submit Assignment"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -11,21 +11,37 @@
 
 .main-section {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   background: linear-gradient(to bottom right, #888888, #ffffff);
-  width: 80%;
-  height: 70%;
+  width: 95%;
+  height: 85%;
   border-radius: 10px;
   margin-top: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
+.problem-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+.question-wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 30px;
+  height: 120px;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
 .question-title {
   display: flex;
   margin: auto;
-  position: absolute;
   align-self: flex-start;
   margin: 20px;
 }
@@ -35,7 +51,7 @@
   flex-direction: column;
   margin-left: 7rem;
   width: 70%;
-  height: 70%;
+  height: 80%;
   justify-content: space-between;
 }
 
@@ -231,7 +247,7 @@
 .sidebar {
   background-color: #ffffff;
   width: 16%;
-  height: 70%;
+  height: 90%;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
   margin-right: 10px;
@@ -336,7 +352,6 @@ math-field::part(mathfield) {
   background-color: #ddd;
 }
 
-
 .mathlive-placeholder-button:active {
   background: #e0e0e0;
   transform: scale(0.97);
@@ -372,3 +387,90 @@ math-field::part(mathfield) {
     opacity: 0.001;
   }
 }
+
+/* Submit Assignment Modal */
+
+.submit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.submit-modal {
+  width: min(450px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: white;
+  color: black;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.submit-modal h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+}
+
+.submit-modal p {
+  margin: 0 0 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.submit-modal .submit-warning {
+  padding: 0.85rem;
+  border-radius: 6px;
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.submit-modal .submit-error {
+  color: #c62828;
+}
+
+.submit-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.submit-modal-actions button {
+  padding: 0.65rem 1.1rem;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.submit-modal-actions button:first-child {
+  background-color: lightgray;
+  color: black;
+}
+
+.submit-modal-actions button:last-child {
+  background-color: rgb(69, 161, 69);
+  color: white;
+}
+
+.submit-modal-actions button:last-child:hover:not(:disabled) {
+  background-color: rgb(53, 135, 53);
+}
+
+.submit-modal-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
