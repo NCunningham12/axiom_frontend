@@ -28,6 +28,11 @@ export default function Assignment() {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submittingAssignment, setSubmittingAssignment] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [showUnsubmitModal, setShowUnsubmitModal] = useState(false);
+  const [unsubmittingAssignment, setUnsubmittingAssignment] = useState(false);
+  const [unsubmitError, setUnsubmitError] = useState("");
+
+  const isReviewMode = attempt?.status === "completed";
 
   const startTimeRef = useRef(Date.now());
 
@@ -81,17 +86,22 @@ export default function Assignment() {
   }, [assignment]);
 
   const handleInputChange = (index, input) => {
+    if (isReviewMode) return;
+
     setUserAnswers({ ...userAnswers, [index]: input });
   };
 
   useEffect(() => {
+    if (!attempt || isReviewMode) return;
+
     const timer = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
       setTimeSpent(elapsed);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [attempt?.id, isReviewMode]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -101,6 +111,8 @@ export default function Assignment() {
   };
 
   const handleSubmit = async () => {
+    if (isReviewMode) return;
+
     const input = userAnswers[currentProblemIndex];
     const problem = problems[currentProblemIndex];
     const skill = skillMap[problem.type];
@@ -379,7 +391,7 @@ export default function Assignment() {
     : 0;
 
   const submitAssignment = async () => {
-    if (!attempt?.id || submittingAssignment) return;
+    if (!attempt?.id || submittingAssignment || isReviewMode) return;
 
     try {
       setSubmittingAssignment(true);
@@ -408,6 +420,43 @@ export default function Assignment() {
       setSubmitError(error.message);
     } finally {
       setSubmittingAssignment(false);
+    }
+  };
+
+  const unsubmitAssignment = async () => {
+    if (!attempt?.id || unsubmittingAssignment || !isReviewMode) return;
+
+    try {
+      setUnsubmittingAssignment(true);
+      setUnsubmitError("");
+
+      const response = await fetch(
+        `http://localhost:5000/api/attempts/${attempt.id}/unsubmit`,
+        {
+          method: "PUT",
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to unsubmit assignment.");
+      }
+
+      startTimeRef.current = Date.now() - timeSpent * 1000;
+
+      setAttempt((previousAttempt) => ({
+        ...previousAttempt,
+        status: data.status,
+        completed_at: null,
+      }));
+
+      setShowUnsubmitModal(false);
+    } catch (error) {
+      console.error("Assignment unsubmission failed:", error);
+      setUnsubmitError(error.message);
+    } finally {
+      setUnsubmittingAssignment(false);
     }
   };
 
@@ -442,12 +491,24 @@ export default function Assignment() {
       <div className="main-section">
         <div className="question-wrap">
           <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
-          <button
-            className="submit-assignment"
-            onClick={() => setShowSubmitModal(true)}
-          >
-            Submit Assignment
-          </button>
+          {isReviewMode ? (
+            <button
+              className="submit-assignment"
+              onClick={() => {
+                setUnsubmitError("");
+                setShowUnsubmitModal(true);
+              }}
+            >
+              Unsubmit & Edit
+            </button>
+          ) : (
+            <button
+              className="submit-assignment"
+              onClick={() => setShowSubmitModal(true)}
+            >
+              Submit Assignment
+            </button>
+          )}
         </div>
 
         <div className="problem-container">
@@ -467,6 +528,7 @@ export default function Assignment() {
                     handleInputChange,
                     currentProblemIndex,
                     handleSubmit,
+                    isReviewMode,
                   )}
                 </div>
               )}
@@ -477,9 +539,11 @@ export default function Assignment() {
                 </div>
               )}
             </div>
-            <button className="submit-btn" onClick={handleSubmit}>
-              Submit
-            </button>
+            {!isReviewMode && (
+              <button className="submit-btn" onClick={handleSubmit}>
+                Submit
+              </button>
+            )}
           </div>
           <div className="sidebar">
             <div className="question-number-div sidebar-div">
@@ -546,6 +610,41 @@ export default function Assignment() {
                 onClick={submitAssignment}
               >
                 {submittingAssignment ? "Submitting..." : "Submit Assignment"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showUnsubmitModal && (
+        <div className="submit-modal-overlay">
+          <div className="submit-modal">
+            <h2>Unsubmit Assignment?</h2>
+
+            <p>
+              Your previous answers and progress will be saved, and you will be
+              able to edit your work again.
+            </p>
+
+            <p className="submit-warning">
+              This assignment will return to your To Do list until you submit it
+              again.
+            </p>
+
+            {unsubmitError && <p className="submit-error">{unsubmitError}</p>}
+
+            <div className="submit-modal-actions">
+              <button
+                disabled={unsubmittingAssignment}
+                onClick={() => setShowUnsubmitModal(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                disabled={unsubmittingAssignment}
+                onClick={unsubmitAssignment}
+              >
+                {unsubmittingAssignment ? "Unsubmitting..." : "Unsubmit & Edit"}
               </button>
             </div>
           </div>

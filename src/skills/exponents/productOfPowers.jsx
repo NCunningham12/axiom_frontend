@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import 'katex/dist/katex.min.css';
-import { InlineMath } from 'react-katex';
-import MathInput from '../../components/MathInput';
+import React, { useState } from "react";
+import "katex/dist/katex.min.css";
+import { InlineMath } from "react-katex";
+import MathInput from "../../components/MathInput";
 
 // 1. Generator: create the dynamic problem
 export function generateProblem() {
-  const baseOptions = ['a', 'b', 'x', 'y'];
+  const baseOptions = ["a", "b", "x", "y"];
   const base = baseOptions[Math.floor(Math.random() * baseOptions.length)];
 
   const m = Math.floor(Math.random() * 5) + 1;
@@ -16,9 +16,9 @@ export function generateProblem() {
 
   return {
     id: `productOfPowers-${base}${m}${n}`,
-    concept: 'exponents',
-    type: 'productOfPowers',
-    directions: 'Solve the exponent using the Product of Powers Rule.',
+    concept: "exponents",
+    type: "productOfPowers",
+    directions: "Solve the exponent using the Product of Powers Rule.",
     question,
     answer: {
       base,
@@ -28,7 +28,14 @@ export function generateProblem() {
 }
 
 // 2. Renderer: visually render the problem
-export function renderProblem(userAnswer, problem, handleInputChange, index, handleSubmit) {
+export function renderProblem(
+  userAnswer,
+  problem,
+  handleInputChange,
+  index,
+  handleSubmit,
+  isReviewMode = false,
+) {
   let insertLatexFn = () => {};
 
   const buttons = [
@@ -38,9 +45,9 @@ export function renderProblem(userAnswer, problem, handleInputChange, index, han
           class="mathlive-placeholder-button"
           read-only
           virtual-keyboard-mode="off"
-          onClick={() => insertLatexFn('^\\placeholder{}')}
+          onClick={() => insertLatexFn("^\\placeholder{}")}
         >
-          {'x^{\\placeholder{}}'}
+          {"x^{\\placeholder{}}"}
         </math-field>
       ),
     },
@@ -53,6 +60,7 @@ export function renderProblem(userAnswer, problem, handleInputChange, index, han
       <InlineMath math={problem.question} />
       <MathInput
         value={userAnswer}
+        readOnly={isReviewMode}
         onChange={(val) => {
           handleInputChange(index, val);
         }}
@@ -68,21 +76,21 @@ export function renderProblem(userAnswer, problem, handleInputChange, index, han
 
 // 3. Validator: check the student's answer
 function sanitizeMathInput(input) {
-  console.log('input is: ', input);
+  console.log("input is: ", input);
   if (!input) {
-    console.warn('No input provided to validator');
-    return 'incorrect';
+    console.warn("No input provided to validator");
+    return "incorrect";
   }
-  return (input || '')
-    .replace(/\\text\{(.*?)\}/g, '$1') // convert \text{x} to x
-    .replace(/\\ /g, '') // remove stray backslashes with space
-    .replace(/\s+/g, '') // remove all whitespace
-    .replace(/\^\{(\d+)\}/g, '^$1') // convert ^{10} to ^10 for consistency
+  return (input || "")
+    .replace(/\\text\{(.*?)\}/g, "$1") // convert \text{x} to x
+    .replace(/\\ /g, "") // remove stray backslashes with space
+    .replace(/\s+/g, "") // remove all whitespace
+    .replace(/\^\{(\d+)\}/g, "^$1") // convert ^{10} to ^10 for consistency
     .toLowerCase(); // make case-insensitive
 }
 
 export function validateAnswer(input, problem) {
-  console.log('🔍 validateAnswer called');
+  console.log("🔍 validateAnswer called");
 
   const expectedBase = `${problem.answer.base}`;
   const expectedExponent = `${problem.answer.exponent}`;
@@ -90,20 +98,20 @@ export function validateAnswer(input, problem) {
 
   const sanitized = sanitizeMathInput(input);
 
-  console.log('Expected: ', expected);
-  console.log('Sanitized: ', sanitized);
+  console.log("Expected: ", expected);
+  console.log("Sanitized: ", sanitized);
 
   if (sanitized === expected) {
-    return 'correct';
+    return "correct";
   }
 
-  if (sanitized.includes(expectedBase) && sanitized.includes('^')) {
-    return 'partial'; // base is right, something’s off with exponent
+  if (sanitized.includes(expectedBase) && sanitized.includes("^")) {
+    return "partial"; // base is right, something’s off with exponent
   }
 
-  if (sanitized.includes(expectedExponent) && sanitized.includes('^')) {
-    return 'partial';
+  if (sanitized.includes(expectedExponent) && sanitized.includes("^")) {
+    return "partial";
   }
 
-  return 'incorrect';
+  return "incorrect";
 }

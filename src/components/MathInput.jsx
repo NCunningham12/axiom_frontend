@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { MathfieldElement } from 'mathlive';
+import { useEffect, useRef } from "react";
+import { MathfieldElement } from "mathlive";
 
 export default function MathInput({
   value,
@@ -7,6 +7,7 @@ export default function MathInput({
   buttons = [],
   onInsertLatex,
   onSubmit,
+  readOnly = false,
 }) {
   const ref = useRef(null);
 
@@ -14,46 +15,61 @@ export default function MathInput({
     const inputEl = ref.current;
     if (!inputEl) return;
 
-    inputEl.setValue(value || '', { format: 'latex' });
+    inputEl.readOnly = readOnly;
 
-    const handleInput = () => {
-      const latex = inputEl.getValue('latex');
-      onChange(latex);
-    };
-
-    inputEl.addEventListener('input', handleInput);
-    return () => inputEl.removeEventListener('input', handleInput);
-  }, [value]);
+    inputEl.mathVirtualKeyboardPolicy = readOnly ? "manual" : "auto";
+  }, [readOnly]);
 
   useEffect(() => {
     const inputEl = ref.current;
     if (!inputEl) return;
 
-    inputEl.focus()
-  }, [])
+    inputEl.setValue(value || "", { format: "latex" });
+
+    const handleInput = () => {
+      if (readOnly) return;
+
+      const latex = inputEl.getValue("latex");
+      onChange(latex);
+    };
+
+    inputEl.addEventListener("input", handleInput);
+
+    return () => inputEl.removeEventListener("input", handleInput);
+  }, [value, readOnly, onChange]);
+
+  useEffect(() => {
+    const inputEl = ref.current;
+    if (!inputEl || readOnly) return;
+
+    inputEl.focus();
+  }, [readOnly]);
 
   useEffect(() => {
     const inputEl = ref.current;
     if (!inputEl) return;
 
     const handleKeyDown = (event) => {
-      if (event.key === 'Enter') {
+      if (event.key === "Enter") {
         event.preventDefault();
         event.stopPropagation();
-        onSubmit?.();
+
+        if (!readOnly) {
+          onSubmit?.();
+        }
       }
     };
 
-    inputEl.addEventListener('keydown', handleKeyDown, true);
+    inputEl.addEventListener("keydown", handleKeyDown, true);
 
-    return () => inputEl.removeEventListener('keydown', handleKeyDown, true);
-  }, [onSubmit]);
+    return () => inputEl.removeEventListener("keydown", handleKeyDown, true);
+  }, [onSubmit, readOnly]);
 
   const insertLatex = (snippet) => {
     const inputEl = ref.current;
-    if (!inputEl) return;
+    if (!inputEl || readOnly) return;
 
-    inputEl.executeCommand('insert', snippet);
+    inputEl.executeCommand("insert", snippet);
     inputEl.focus();
   };
 
@@ -61,35 +77,40 @@ export default function MathInput({
     if (onInsertLatex) {
       onInsertLatex(insertLatex);
     }
-  }, [onInsertLatex]);
+  }, [onInsertLatex, readOnly]);
 
   return (
     <div
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        flexWrap: 'wrap',
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        flexWrap: "wrap",
       }}
     >
-      {buttons.map(({ label }, idx) => (
-        <div
-          key={idx}
-          className="math-button-wrapper"
-          style={{ marginRight: '8px', display: 'inline-block' }}
-        >
-          {label}
-        </div>
-      ))}
+      {!readOnly &&
+        buttons.map(({ label }, idx) => (
+          <div
+            key={idx}
+            className="math-button-wrapper"
+            style={{
+              marginRight: "8px",
+              display: "inline-block",
+            }}
+          >
+            {label}
+          </div>
+        ))}
+
       <math-field
         ref={ref}
         style={{
-          minHeight: '40px',
-          minWidth: '200px',
-          border: '1px solid #ccc',
-          borderRadius: '6px',
-          padding: '8px',
-          fontSize: '1.2rem',
+          minHeight: "40px",
+          minWidth: "200px",
+          border: "1px solid #ccc",
+          borderRadius: "6px",
+          padding: "8px",
+          fontSize: "1.2rem",
           flexShrink: 0,
         }}
       ></math-field>
