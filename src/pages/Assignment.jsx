@@ -17,9 +17,11 @@ export default function Assignment() {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [problems, setProblems] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
+  const [submittedAnswers, setSubmittedAnswers] = useState({});
   const [statusMap, setStatusMap] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [successFeedback, setSuccessFeedback] = useState(null);
+  const [answerError, setAnswerError] = useState("");
+  const [checkingAnswer, setCheckingAnswer] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [attempt, setAttempt] = useState(null);
   const [attemptLoading, setAttemptLoading] = useState(true);
@@ -36,8 +38,10 @@ export default function Assignment() {
 
   const startTimeRef = useRef(Date.now());
 
-  const lastSubmittedIndex = useRef(null);
-  const lastSubmittedStatus = useRef(null);
+  const advanceTimerRef = useRef(null);
+  const feedbackTimerRef = useRef(null);
+  const checkingAnswerRef = useRef(false);
+  const attemptSessionRef = useRef(0);
 
   useEffect(() => {
     const fetchAssignment = async () => {
@@ -86,7 +90,7 @@ export default function Assignment() {
   }, [assignment]);
 
   const handleInputChange = (index, input) => {
-    if (isReviewMode) return;
+    if (isReviewMode || statusMap[index] === "correct") return;
 
     setUserAnswers({ ...userAnswers, [index]: input });
   };
@@ -110,15 +114,42 @@ export default function Assignment() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleSubmit = async () => {
-    if (isReviewMode) return;
+  const cancelAutoAdvance = () => {
+    clearTimeout(advanceTimerRef.current);
+    advanceTimerRef.current = null;
+  };
 
-    const input = userAnswers[currentProblemIndex];
-    const problem = problems[currentProblemIndex];
-    const skill = skillMap[problem.type];
+  const handleQuestionNavigation = (index) => {
+    cancelAutoAdvance();
+    setAnswerError("");
+    setCurrentProblemIndex(index);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(advanceTimerRef.current);
+      clearTimeout(feedbackTimerRef.current);
+      attemptSessionRef.current += 1;
+    };
+  }, [assignmentId, studentId]);
+
+  const handleSubmit = async () => {
+    if (isQuestionLocked || checkingAnswerRef.current) return;
+
+    const submittedIndex = currentProblemIndex;
+    const input = userAnswers[submittedIndex] ?? "";
+    const problem = problems[submittedIndex];
+    const skill = skillMap[problem?.type];
+
+    setAnswerError("");
+
+    if (!input.trim()) {
+      setAnswerError("Enter an answer before checking.");
+      return;
+    }
 
     if (!skill || !skill.validateAnswer) {
-      console.warn(`No validator found for type: ${problem.type}`);
+      console.warn(`No validator found for type: ${problem?.type}`);
       return;
     }
 
@@ -127,32 +158,44 @@ export default function Assignment() {
       return;
     }
 
-    const status = skill.validateAnswer(input, problem);
+    cancelAutoAdvance();
 
-    const updatedStatusMap = {
-      ...statusMap,
-      [currentProblemIndex]: status,
-    };
+    clearTimeout(feedbackTimerRef.current);
+    setSuccessFeedback(null);
 
-    let nextProblemIndex = currentProblemIndex;
+    const session = attemptSessionRef.current;
 
-    if (status === "correct") {
-      const nextUnanswered = problems.findIndex(
-        (_, index) => !updatedStatusMap[index],
-      );
-
-      if (nextUnanswered !== -1) {
-        nextProblemIndex = nextUnanswered;
-      }
-    }
-
-    const scoreAwarded =
-      status === "correct" ? 1 : status === "partial" ? 0.5 : 0;
+    checkingAnswerRef.current = true;
+    setCheckingAnswer(true);
 
     try {
+      const status = skill.validateAnswer(input, problem);
+
+      const updatedStatusMap = {
+        ...statusMap,
+        [submittedIndex]: status,
+      };
+
+      let nextProblemIndex = submittedIndex;
+
+      if (status === "correct") {
+        const nextUnanswered = problems.findIndex(
+          (_, index) =>
+            !updatedStatusMap[index] ||
+            updatedStatusMap[index] === "unanswered",
+        );
+
+        if (nextUnanswered !== -1) {
+          nextProblemIndex = nextUnanswered;
+        }
+      }
+
+      const scoreAwarded =
+        status === "correct" ? 1 : status === "partial" ? 0.5 : 0;
+
       const response = await fetch(
         `http://localhost:5000/api/attempts/${attempt.id}/problems/${
-          currentProblemIndex + 1
+          submittedIndex + 1
         }`,
         {
           method: "PUT",
@@ -177,6 +220,8 @@ export default function Assignment() {
         );
       }
 
+      if (session !== attemptSessionRef.current) return;
+
       setAttempt((previousAttempt) => ({
         ...previousAttempt,
         current_problem_index: responseData.attempt.currentProblemIndex,
@@ -185,53 +230,54 @@ export default function Assignment() {
         score: responseData.attempt.score,
         time_spent_seconds: responseData.attempt.timeSpentSeconds,
       }));
+
+      setStatusMap(updatedStatusMap);
+
+      if (status !== "unanswered") {
+        setSubmittedAnswers((previousAnswers) => ({
+          ...previousAnswers,
+          [submittedIndex]: input,
+        }));
+
+        setUserAnswers((previousAnswers) => ({
+          ...previousAnswers,
+          [submittedIndex]: "",
+        }));
+      }
+
+      // Celebrate a successfully saved correct answer.
+      if (status === "correct") {
+        setSuccessFeedback({
+          questionNumber: submittedIndex + 1,
+        });
+
+        // Advance after a brief moment of recognition.
+        if (nextProblemIndex !== submittedIndex) {
+          advanceTimerRef.current = setTimeout(() => {
+            setCurrentProblemIndex(nextProblemIndex);
+            advanceTimerRef.current = null;
+          }, 1000);
+        }
+
+        // Remove the notification after 1.5 seconds.
+        feedbackTimerRef.current = setTimeout(() => {
+          setSuccessFeedback(null);
+          feedbackTimerRef.current = null;
+        }, 1500);
+      }
     } catch (error) {
+      if (session !== attemptSessionRef.current) return;
+
       console.error("Failed to save problem progress:", error);
 
-      setModalMessage(`❌ Progress was not saved: ${error.message}`);
-      setShowModal(true);
-
-      setTimeout(() => {
-        setShowModal(false);
-      }, 3000);
-
-      return;
-    }
-
-    lastSubmittedIndex.current = currentProblemIndex;
-    lastSubmittedStatus.current = status;
-
-    setStatusMap(updatedStatusMap);
-
-    const emojiMessages = {
-      correct: "✅ Correct! Good job.",
-      incorrect: "❌ Incorrect! Try again.",
-      partial: "⚠️ Partially Correct!",
-      unanswered: "🤔 Unanswered!",
-    };
-
-    setModalMessage(emojiMessages[status] || `🤷 Unknown status: ${status}`);
-
-    setShowModal(true);
-
-    setTimeout(() => {
-      setShowModal(false);
-    }, 3000);
-  };
-
-  useEffect(() => {
-    if (lastSubmittedStatus.current === "correct") {
-      const nextUnanswered = problems.findIndex((_, i) => !statusMap[i]);
-      if (
-        nextUnanswered !== -1 &&
-        nextUnanswered !== lastSubmittedIndex.current
-      ) {
-        setTimeout(() => {
-          setCurrentProblemIndex(nextUnanswered);
-        }, 3000);
+      setAnswerError(`Progress was not saved: ${error.message}`);
+    } finally {
+      if (session === attemptSessionRef.current) {
+        checkingAnswerRef.current = false;
+        setCheckingAnswer(false);
       }
     }
-  }, [statusMap]);
+  };
 
   useEffect(() => {
     const startAttempt = async () => {
@@ -243,13 +289,19 @@ export default function Assignment() {
       setAttempt(null);
       setSavedResults([]);
       setUserAnswers({});
+      setSubmittedAnswers({});
       setStatusMap({});
       setCurrentProblemIndex(0);
       setTimeSpent(0);
       startTimeRef.current = Date.now();
 
-      lastSubmittedIndex.current = null;
-      lastSubmittedStatus.current = null;
+      cancelAutoAdvance();
+      clearTimeout(feedbackTimerRef.current);
+
+      checkingAnswerRef.current = false;
+      setCheckingAnswer(false);
+      setSuccessFeedback(null);
+      setAnswerError("");
 
       if (!studentId) {
         setAttemptError("No student selected.");
@@ -337,7 +389,8 @@ export default function Assignment() {
       restoredStatuses[problemIndex] = result.status;
     });
 
-    setUserAnswers(restoredAnswers);
+    setUserAnswers({});
+    setSubmittedAnswers(restoredAnswers);
     setStatusMap(restoredStatuses);
 
     const restoredProblemIndex = Number(attempt.current_problem_index) || 0;
@@ -358,6 +411,7 @@ export default function Assignment() {
   const currentProblem = problems[currentProblemIndex];
 
   const currentStatus = statusMap[currentProblemIndex] || "unanswered";
+  const isQuestionLocked = isReviewMode || currentStatus === "correct";
   const sidebarStatusClass = `side-content status-${currentStatus}`;
 
   const displayStatus =
@@ -380,18 +434,41 @@ export default function Assignment() {
     return <p>Unable to load assignment.</p>;
   }
 
+  // Sidebar statistics calculations
+
+  const statuses = Object.values(statusMap);
+
+  const correctCount = statuses.filter((status) => status === "correct").length;
+
+  const incorrectCount = statuses.filter(
+    (status) => status === "incorrect",
+  ).length;
+
+  const partialCount = statuses.filter((status) => status === "partial").length;
+
+  const answeredCount = correctCount + incorrectCount + partialCount;
+
+  const unansweredCount = problems.length - answeredCount;
+
   const completionPercentage = problems.length
-    ? Math.round(
-        (Object.values(statusMap).filter(
-          (status) => status === "correct" || status === "incorrect",
-        ).length /
-          problems.length) *
-          100,
-      )
+    ? Math.round((answeredCount / problems.length) * 100)
     : 0;
 
+  const assignmentScore = problems.length
+    ? ((correctCount + partialCount * 0.5) / problems.length) * 100
+    : 0;
+
+  const allQuestionsAnswered = problems.length > 0 && unansweredCount === 0;
+
   const submitAssignment = async () => {
-    if (!attempt?.id || submittingAssignment || isReviewMode) return;
+    if (
+      !attempt?.id ||
+      submittingAssignment ||
+      isReviewMode ||
+      checkingAnswerRef.current ||
+      !allQuestionsAnswered
+    )
+      return;
 
     try {
       setSubmittingAssignment(true);
@@ -462,120 +539,251 @@ export default function Assignment() {
 
   return (
     <div className="assignment-wrapper">
+      <header className="assignment-header">
+        <h1>{assignment?.metadata?.assignmentName}</h1>
+        <p>Standard Assignment</p>
+      </header>
+
       <div className="top-section">
+        <div className="question-nav-header">
+          <h2>Questions</h2>
+          <span>
+            Question {currentProblemIndex + 1} of {problems.length}
+          </span>
+        </div>
+
         <div className="problem-selector">
           {problems.map((_, index) => {
-            const status = statusMap[index];
+            const status = statusMap[index] || "unanswered";
             const isActive = index === currentProblemIndex;
-
-            let className = "problem-tab";
-            if (status === "correct") className += " correct";
-            else if (status === "partial") className += " partial";
-            else if (status === "incorrect") className += " incorrect";
-
-            if (isActive) className += " active";
 
             return (
               <button
                 key={index}
-                className={className}
-                onClick={() => setCurrentProblemIndex(index)}
+                className={`problem-tab ${status} ${isActive ? "active" : ""}`}
+                onClick={() => handleQuestionNavigation(index)}
+                disabled={checkingAnswer}
+                aria-label={`Question ${index + 1}, ${status}`}
+                aria-current={isActive ? "step" : undefined}
               >
                 {index + 1}
+                {status === "correct" && <span aria-hidden="true">✓</span>}
+                {status === "incorrect" && <span aria-hidden="true">×</span>}
+                {status === "partial" && <span aria-hidden="true">~</span>}
               </button>
             );
           })}
         </div>
+
+        <div className="question-nav-legend">
+          <span className="legend-correct">✓ Correct</span>
+          <span className="legend-incorrect">× Incorrect</span>
+          <span className="legend-unanswered">○ Unanswered</span>
+
+          {Object.values(statusMap).includes("partial") && (
+            <span className="legend-partial">~ Partially Correct</span>
+          )}
+        </div>
       </div>
 
       <div className="main-section">
-        <div className="question-wrap">
-          <h2 className="question-title">Question {currentProblemIndex + 1}</h2>
-          {isReviewMode ? (
-            <button
-              className="submit-assignment"
-              onClick={() => {
-                setUnsubmitError("");
-                setShowUnsubmitModal(true);
-              }}
-            >
-              Unsubmit & Edit
-            </button>
-          ) : (
-            <button
-              className="submit-assignment"
-              onClick={() => setShowSubmitModal(true)}
-            >
-              Submit Assignment
-            </button>
-          )}
-        </div>
-
         <div className="problem-container">
           <div className="problem-wrapper">
-            <h2
-              className="as
-            signment-title"
+            <div className="question-wrap">
+              <h2 className="question-title">
+                Question {currentProblemIndex + 1} of {problems.length}
+              </h2>
+
+              <div className="question-header-badges">
+                {isReviewMode && (
+                  <span className="assignment-review-label">Review Mode</span>
+                )}
+
+                <span
+                  className={`question-status-badge ${currentStatus}`}
+                  role="status"
+                >
+                  {currentStatus === "correct" && "✓ Correct"}
+                  {currentStatus === "incorrect" && "× Incorrect"}
+                  {currentStatus === "unanswered" && "○ Unanswered"}
+                  {currentStatus === "partial" && "~ Partially Correct"}
+                </span>
+              </div>
+            </div>
+            <div
+              className="answer-feedback-region"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
             >
-              {assignment?.metadata?.assignmentName}
-            </h2>
+              {successFeedback && (
+                <div
+                  key={successFeedback.questionNumber}
+                  className="answer-success-toast"
+                >
+                  <span aria-hidden="true">✓</span>
+                  Question {successFeedback.questionNumber} — Correct!
+                </div>
+              )}
+            </div>
             <div className="problem-display">
               {currentProblem && (
                 <div className="problem" key={currentProblemIndex}>
                   {skillMap[currentProblem.type]?.renderProblem(
-                    userAnswers[currentProblemIndex] || "",
+                    isQuestionLocked
+                      ? (submittedAnswers[currentProblemIndex] ?? "")
+                      : (userAnswers[currentProblemIndex] ?? ""),
                     currentProblem,
                     handleInputChange,
                     currentProblemIndex,
                     handleSubmit,
-                    isReviewMode,
+                    isQuestionLocked,
                   )}
                 </div>
               )}
-              {statusMap[currentProblemIndex] && (
-                <div className="answer-badge">
-                  Your Answer:
-                  <InlineMath math={userAnswers[currentProblemIndex]} />
+              {submittedAnswers[currentProblemIndex] && (
+                <div className={`previous-answer-panel ${currentStatus}`}>
+                  <div className="previous-answer-header">
+                    <span>
+                      {isQuestionLocked ? "Your answer" : "Previous answer"}
+                    </span>
+
+                    <strong>
+                      {currentStatus === "correct" && "✓ Correct"}
+                      {currentStatus === "incorrect" && "× Incorrect"}
+                      {currentStatus === "partial" && "~ Partially Correct"}
+                    </strong>
+                  </div>
+
+                  <div className="previous-answer-math">
+                    <InlineMath math={submittedAnswers[currentProblemIndex]} />
+                  </div>
                 </div>
               )}
             </div>
-            {!isReviewMode && (
-              <button className="submit-btn" onClick={handleSubmit}>
-                Submit
+            {!isQuestionLocked && (
+              <button
+                className="submit-btn"
+                onClick={handleSubmit}
+                disabled={checkingAnswer}
+              >
+                {checkingAnswer ? "Checking..." : "Check Answer"}
               </button>
             )}
-          </div>
-          <div className="sidebar">
-            <div className="question-number-div sidebar-div">
-              <p className="side-header question-header">Question</p>
-              <p className="side-content">
-                {currentProblemIndex + 1} / {problems.length}
+
+            {answerError && (
+              <p className="answer-error" role="alert">
+                {answerError}
               </p>
-            </div>
-            <div className="side-status-div sidebar-div">
-              <p className="side-header">Status: </p>
-              <p className={sidebarStatusClass}>{displayStatus}</p>
-            </div>
-            <div className="current-score-div sidebar-div">
-              <p className="side-header">Score: </p>
-              <p className="side-content">
-                {(
-                  (Object.values(statusMap).filter((s) => s === "correct")
-                    .length /
-                    problems.length) *
-                  100
-                ).toFixed(2)}
-                {"%"}
-              </p>
-            </div>
-            <div className="question-time-div sidebar-div">
-              <p className="side-header">Time Spent:</p>
-              <div className="side-content">{formatTime(timeSpent)}</div>
-            </div>
+            )}
           </div>
+          <aside className="sidebar">
+            <h2 className="sidebar-title">Assignment progress</h2>
+
+            <div className="assignment-progress">
+              <div className="assignment-progress-label">
+                <span>
+                  {answeredCount} of {problems.length} answered
+                </span>
+                <strong>{completionPercentage}%</strong>
+              </div>
+
+              <div
+                className="assignment-progress-track"
+                role="progressbar"
+                aria-label="Assignment completion"
+                aria-valuenow={completionPercentage}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <div
+                  className="assignment-progress-fill"
+                  style={{ width: `${completionPercentage}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="assignment-metrics">
+              <div className="assignment-metric">
+                <span>Score</span>
+                <strong>{Number(assignmentScore.toFixed(2))}%</strong>
+              </div>
+
+              <div className="assignment-metric">
+                <span>Time spent</span>
+                <strong>{formatTime(timeSpent)}</strong>
+              </div>
+            </div>
+
+            <div className="assignment-status-summary">
+              <div className="assignment-status-row summary-correct">
+                <span>✓ Correct</span>
+                <strong>{correctCount}</strong>
+              </div>
+
+              <div className="assignment-status-row summary-incorrect">
+                <span>× Incorrect</span>
+                <strong>{incorrectCount}</strong>
+              </div>
+
+              {partialCount > 0 && (
+                <div className="assignment-status-row summary-partial">
+                  <span>~ Partially Correct</span>
+                  <strong>{partialCount}</strong>
+                </div>
+              )}
+
+              <div className="assignment-status-row summary-unanswered">
+                <span>○ Unanswered</span>
+                <strong>{unansweredCount}</strong>
+              </div>
+            </div>
+
+            <div className="assignment-submission-section">
+              {isReviewMode ? (
+                <>
+                  <h3>Assignment submitted</h3>
+                  <p>You are currently reviewing your work.</p>
+
+                  <button
+                    className="submit-assignment"
+                    onClick={() => {
+                      setUnsubmitError("");
+                      setShowUnsubmitModal(true);
+                    }}
+                  >
+                    Unsubmit & Edit
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h3>
+                    {allQuestionsAnswered
+                      ? "All questions answered!"
+                      : "Not ready to submit yet"}
+                  </h3>
+
+                  <p>
+                    {allQuestionsAnswered
+                      ? "You're ready to submit your assignment."
+                      : `Answer ${unansweredCount} more ${
+                          unansweredCount === 1 ? "question" : "questions"
+                        } to submit.`}
+                  </p>
+
+                  <button
+                    className="submit-assignment"
+                    onClick={() => setShowSubmitModal(true)}
+                    disabled={checkingAnswer || !allQuestionsAnswered}
+                  >
+                    Submit Assignment
+                  </button>
+                </>
+              )}
+            </div>
+          </aside>
         </div>
       </div>
-      {showModal && <div className="fade-modal">{modalMessage}</div>}
       {showSubmitModal && (
         <div className="submit-modal-overlay">
           <div className="submit-modal">
@@ -587,13 +795,6 @@ export default function Assignment() {
               Your progress will be saved, and you can review your assignment
               after submitting.
             </p>
-
-            {attempt.total_answered < problems.length && (
-              <p className="submit-warning">
-                You still have unanswered questions. Are you sure you want to
-                submit?
-              </p>
-            )}
 
             {submitError && <p className="submit-error">{submitError}</p>}
 
